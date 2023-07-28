@@ -6,109 +6,109 @@
 
 class Room {
 public:
-	Plane floor;
-	Plane ceiling;
-	Plane leftWall;
-	Plane rightWall;
-	Plane frontWall;
-	Plane backWall;
-
+	Plane* planes;
+	int numPlanes;
 	int numTriangles;
 
-	Room(int nt) {
+	Room(int nt, int np) {
 		numTriangles = nt;
+		numPlanes = np;
+		planes = new Plane[numPlanes];
 
+		switch (numPlanes) {
+		case 6:
+			genCube();
+			break;
+		}
+	}
+
+	void genCube() {
 		Point* floorPoints = new Point[4]{ {-1, -1, 1}, {-1, -1, -1}, {1, -1, 1} ,{1, -1, -1} };
-		floor = Plane(floorPoints, 4, numTriangles);
+		Plane floor = Plane(floorPoints, 4, numTriangles);
 		floor.name = "floor";
 
 		Point* ceilingPoints = new Point[4]{ {-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1} };
-		ceiling = { ceilingPoints, 4, numTriangles };
+		Plane ceiling = { ceilingPoints, 4, numTriangles };
 		ceiling.name = "ceiling";
 
 		Point* leftWallPoints = new Point[4]{ {-1, -1, 1}, {-1, 1, 1}, {-1, -1, -1}, {-1, 1, -1} };
-		leftWall = { leftWallPoints, 4, numTriangles };
+		Plane leftWall = { leftWallPoints, 4, numTriangles };
 		leftWall.name = "leftWall";
 
 		Point* rightWallPoints = new Point[4]{ {1, -1, 1}, {1, -1, -1}, {1, 1, 1}, {1, 1, -1} };
-		rightWall = { rightWallPoints, 4, numTriangles }; \
-			rightWall.name = "rightWall";
+		Plane rightWall = { rightWallPoints, 4, numTriangles };
+		rightWall.name = "rightWall";
 
 		Point* frontWallPoints = new Point[4]{ {-1, -1, 1},{1, -1, 1},{-1, 1, 1}, {1, 1, 1} };
-		frontWall = { frontWallPoints, 4, numTriangles };
+		Plane frontWall = { frontWallPoints, 4, numTriangles };
 		frontWall.name = "frontWall";
 
 		Point* backWallPoints = new Point[4]{ {-1, -1, -1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, -1} };
-		backWall = { backWallPoints, 4, numTriangles };
+		Plane backWall = { backWallPoints, 4, numTriangles };
 		backWall.name = "backWall";
+
+		planes[0] = floor;
+		planes[1] = ceiling;
+		planes[2] = leftWall;
+		planes[3] = rightWall;
+		planes[4] = frontWall;
+		planes[5] = backWall;
+
 	}
 
 	Vect* getNormals() {
-		Vect* normals = new Vect[6]{
-			floor.getNormal(),
-			ceiling.getNormal(),
-			leftWall.getNormal(),
-			rightWall.getNormal(),
-			frontWall.getNormal(),
-			backWall.getNormal()
-		};
+		Vect* normals = new Vect[numPlanes];
+		for (int i = 0; i < numPlanes; i++) {
+			normals[i] = planes[i].getNormal();
+		}
 		return normals;
 	}
 
+	double** getAllVertices() {
+		int tnt = numTriangles * numPlanes;
+		double** vertices = new double* [tnt];
+
+		int k = 0;
+		for (int i = 0; i < tnt; i++) {
+			double* flat = planes[k].triangles[i % numTriangles].flatArray();
+			vertices[i] = new double[9];
+			for (int j = 0; j < 9; j++) {
+				vertices[i][j] = flat[j];
+			}
+			if (i % numTriangles == numTriangles - 1) {
+				k++;
+			}
+		}
+
+		return vertices;
+	}
+
+
 	Plane* SurpassedPlane(const Point& p) {
-		if (floor.hasSurpassed(p)) {
-			return &floor;
+		for (int i = 0; i < numPlanes; i++) {
+			if (planes[i].hasSurpassed(p)) {
+				return &planes[i];
+			}
 		}
-		else if (ceiling.hasSurpassed(p)) {
-			return &ceiling;
-		}
-		else if (leftWall.hasSurpassed(p)) {
-			return &leftWall;
-		}
-		else if (rightWall.hasSurpassed(p)) {
-			return &rightWall;
-		}
-		else if (frontWall.hasSurpassed(p)) {
-			return &frontWall;
-		}
-		else if (backWall.hasSurpassed(p)) {
-			return &backWall;
-		}
-		else {
-			return nullptr;
-		}
+		return nullptr;
 	}
 
 	Plane* nearestSurpassedPlane(const Point& p, const Vect& incidence) {
-		Plane* nearest = &floor;
+		Plane* nearest = &planes[0];
+
 		if (SurpassedPlane(p) == nullptr) {
 			return nullptr;
 		}
-		double minDistance = floor.distance(p);
-		double distance = ceiling.distance(p);
-		if (distance < minDistance) {
-			minDistance = distance;
-			nearest = &ceiling;
-		}
-		distance = leftWall.distance(p);
-		if (distance < minDistance) {
-			minDistance = distance;
-			nearest = &leftWall;
-		}
-		distance = rightWall.distance(p);
-		if (distance < minDistance) {
-			minDistance = distance;
-			nearest = &rightWall;
-		}
-		distance = frontWall.distance(p);
-		if (distance < minDistance) {
-			minDistance = distance;
-			nearest = &frontWall;
-		}
-		distance = backWall.distance(p);
-		if (distance < minDistance) {
-			minDistance = distance;
-			nearest = &backWall;
+
+		double minDistance = nearest->distance(p);
+		double distance = nearest->distance(p);
+
+		for (int i = 0; i < numPlanes; i++) {
+			distance = planes[i].distance(p);
+			if (distance < minDistance) {
+				minDistance = distance;
+				nearest = &planes[i];
+			}
 		}
 		return nearest;
 	}

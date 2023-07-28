@@ -79,23 +79,13 @@ public:
 		return n.length() / 2.0;
 	}
 
-	double* flatArray() const {
-		double* res = new double[9];
-		res[0] = a.x;
-		res[1] = a.y;
-		res[2] = a.z;
-		res[3] = b.x;
-		res[4] = b.y;
-		res[5] = b.z;
-		res[6] = c.x;
-		res[7] = c.y;
-		res[8] = c.z;
+	double* flatArray() {
+		double* res = new double[9] {a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z};
 		return res;
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Triangle& t) {
-		//os << "Triangle: " << t.getA() << ", " << t.getB() << ", " << t.getC();
-		os << t.getA() << "\n" << t.getB() << "\n" << t.getC();
+		os << t.getA() << ":" << t.getB() << ":" << t.getC();
 		return os;
 	}
 };

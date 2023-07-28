@@ -124,36 +124,19 @@ int main()
 
 	// Triangle numbers
 	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
-	Room room = Room(n);
+	const int faces = 6;
 
-	const int tnt = n * 6;
-	double allVertices[tnt][9];
+	Room room = Room(n, faces);
 
-	for (int i = 0; i < n * 6; i++) {
-		double* flat;
-		if (i < n) {
-			flat = room.leftWall.triangles[i % n].flatArray();
-		}
-		else if (i < n * 2) {
-			flat = room.rightWall.triangles[i % n].flatArray();
-		}
-		else if (i < n * 3) {
-			flat = room.backWall.triangles[i % n].flatArray();
-		}
-		else if (i < n * 4) {
-			flat = room.frontWall.triangles[i % n].flatArray();
-		}
-		else if (i < n * 5) {
-			flat = room.ceiling.triangles[i % n].flatArray();
-		}
-		else {
-			flat = room.floor.triangles[i % n].flatArray();
-		}
-
+	const int tnt = n * faces;
+	double** toDraw = room.getAllVertices();
+	double allVertices[n * faces][9];
+	for (int i = 0; i < n * faces; i++) {
 		for (int j = 0; j < 9; j++) {
-			allVertices[i][j] = flat[j];
+			allVertices[i][j] = toDraw[i][j];
 		}
 	}
+	delete[] toDraw;
 
 	unsigned int VBO[tnt], VAO[tnt];
 	glGenVertexArrays(tnt, VAO);
@@ -187,8 +170,8 @@ int main()
 	Shader cubeShader("shaders/cube.vs", "shaders/cube.fs");
 
 	//------------- PARAMETERS -------------//
-	Point position = { 0.1, 0.2, 0.3 };
-	Vect incidence = Vect({ 0.2, -0.1, 0 });
+	Point position = { 0.9, 0.2, 0.3 };
+	Vect incidence = Vect({ -1.0, -0.1, 0.3 });
 	float energy = 10;
 	float loss = 0.2;
 	bool allowScale = false;
