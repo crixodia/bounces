@@ -16,6 +16,7 @@ public:
 	Plane() {
 		points = NULL;
 		numPoints = 0;
+		name = "none";
 	}
 
 	Plane(const Point* p, int n, int nt) {

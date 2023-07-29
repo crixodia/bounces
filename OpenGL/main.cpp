@@ -16,6 +16,8 @@
 #include "room.h"
 #include "plane.h"
 #include "vect.h"
+#include "particle.h"
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -68,69 +70,24 @@ int main()
 		return -1;
 	}
 
-	float cubeVertices[] = {
-		// positions          // texture Coords
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
 	double colors[] = {
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.5f,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.5f,
-		207.0f / 255.0f, 226.0f / 255.0f, 243.0f / 255.0f, 0.5f,
-		207.0f / 255.0f, 226.0f / 255.0f, 243.0f / 255.0f, 0.5f,
-		159.0f / 255.0f, 197.0f / 255.0f, 232.0f / 255.0f, 0.5f,
-		159.0f / 255.0f, 197.0f / 255.0f, 232.0f / 255.0f, 0.5f,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
+		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
 	};
 
 	// Triangle numbers
-	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
 
 	const int tnt = n * faces;
 	double** toDraw = room.getAllVertices();
-	double allVertices[n * faces][9];
+	double allVertices[n * faces][9]{};
 	for (int i = 0; i < n * faces; i++) {
 		for (int j = 0; j < 9; j++) {
 			allVertices[i][j] = toDraw[i][j];
@@ -169,13 +126,8 @@ int main()
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
 	Shader cubeShader("shaders/cube.vs", "shaders/cube.fs");
 
-	//------------- PARAMETERS -------------//
-	Point position = { 0.9, 0.2, 0.3 };
-	Vect incidence = Vect({ -1.0, -0.1, 0.3 });
-	float energy = 10;
-	float loss = 0.2;
-	bool allowScale = false;
-	//--------------------------------------//
+	// Particle Definition
+	Particle particle = Particle(cubeShader, 5, 0.2, { 0.9, 0.2, 0.3 }, Vect({ -1.0, -0.1, 0.3 }));
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -215,37 +167,21 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 
-		// Particle
-		cubeShader.use();
-		cubeShader.setVec4("color", glm::vec4(246.0f / 255.0f, 48.0f / 255.0f, 0.0f, 0.0f));
+		// Draw a line from 1 1 1 to -1 -1 -1
+		roomShader.setVec4("triangle_color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		glBindVertexArray(VAO[0]);
+		glDrawArrays(GL_LINES, 0, 2);
 
-		glm::mat4 particle = glm::mat4(1.0f);
-		position = position + incidence.asPoint() * deltaTime * energy;
-		particle = glm::translate(particle, glm::vec3(position.x, position.y, position.z));
-		particle = glm::scale(particle, glm::vec3(0.05f) * (allowScale ? energy / 5.0f : 1));
 
-		particle = glm::rotate(particle, currentFrame * energy, glm::vec3(0.0f, 0.0f, 1.0f));
-		particle = glm::rotate(particle, currentFrame * energy, glm::vec3(1.0f, 0.0f, 0.0f));
-		particle = glm::rotate(particle, currentFrame * energy, glm::vec3(0.0f, 1.0f, 0.0f));
-		cubeShader.setMat4("model", particle);
-		cubeShader.setMat4("view", view);
-		cubeShader.setMat4("projection", projection);
+
+		particle.transform(deltaTime, currentFrame, view, projection);
+
 		glBindVertexArray(cubeVAO);
 		glActiveTexture(GL_TEXTURE0);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, particle.size);
 		glBindVertexArray(0);
 
-		// Collisions
-		Plane* nearestSurpassed = room.nearestSurpassedPlane(position, incidence);
-		if (nearestSurpassed != nullptr) {
-			std::cout << "Collided with " << nearestSurpassed->name << "\t energy: " << energy << std::endl;
-			Vect normal = nearestSurpassed->getNormal();
-			Vect reflex = nearestSurpassed->reflect(incidence);
-			Point pi = nearestSurpassed->incidence(position, incidence);
-			position = pi;
-			incidence = reflex;
-			energy -= energy * loss;
-		}
+		room.handleParticleCollision(particle);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

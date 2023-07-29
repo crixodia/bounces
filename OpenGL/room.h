@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include "plane.h"
+#include "particle.h"
 
 class Room {
 public:
@@ -91,6 +92,19 @@ public:
 			}
 		}
 		return nullptr;
+	}
+
+	void handleParticleCollision(Particle& p) {
+		Plane* nearestSurpassed = nearestSurpassedPlane(p.position, p.incidence);
+		if (nearestSurpassed != nullptr) {
+			std::cout << "Collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
+			Vect normal = nearestSurpassed->getNormal();
+			Vect reflex = nearestSurpassed->reflect(p.incidence);
+			Point pi = nearestSurpassed->incidence(p.position, p.incidence);
+			p.position = pi;
+			p.incidence = reflex;
+			p.energy -= p.energy * p.loss;
+		}
 	}
 
 	Plane* nearestSurpassedPlane(const Point& p, const Vect& incidence) {

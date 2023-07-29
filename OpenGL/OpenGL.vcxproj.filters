@@ -19,9 +19,6 @@
     <Filter Include="Source Files\textures">
       <UniqueIdentifier>{7f5077cc-038f-44ba-8306-383f0b1eaf27}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\textures\skybox">
-      <UniqueIdentifier>{5f117bd6-6fcb-4678-bbd2-2ec71f306797}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -33,29 +30,6 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\container.jpg">
-      <Filter>Source Files\textures</Filter>
-    </Image>
-    <Image Include="textures\skybox\bottom.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
-    <Image Include="textures\skybox\back.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
-    <Image Include="textures\skybox\front.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
-    <Image Include="textures\skybox\left.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
-    <Image Include="textures\skybox\right.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
-    <Image Include="textures\skybox\top.jpg">
-      <Filter>Source Files\textures\skybox</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cube.fs">
@@ -94,6 +68,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="receptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
