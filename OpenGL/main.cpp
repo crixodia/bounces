@@ -18,24 +18,12 @@
 #include "vect.h"
 #include "particle.h"
 
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window);
-
+// Screen size
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
-// camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-float lastX = (float)SCR_WIDTH / 2.0;
-float lastY = (float)SCR_HEIGHT / 2.0;
-bool firstMouse = true;
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
+// Utils (Camera, Timing)
+#include "utils.h"
 
 int main()
 {
@@ -80,7 +68,7 @@ int main()
 	};
 
 	// Triangle numbers
-	const int n = 800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -127,7 +115,11 @@ int main()
 	Shader cubeShader("shaders/cube.vs", "shaders/cube.fs");
 
 	// Particle Definition
-	Particle particle = Particle(cubeShader, 5, 0.2, { 0.9, 0.2, 0.3 }, Vect({ -1.0, -0.1, 0.3 }));
+	Particle particle = Particle(
+		cubeShader, 5, 0,
+		{ 0.9, 0.2, 0.3 },
+		Vect({ -1.0, -0.1, 0.3 })
+	);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -172,8 +164,6 @@ int main()
 		glBindVertexArray(VAO[0]);
 		glDrawArrays(GL_LINES, 0, 2);
 
-
-
 		particle.transform(deltaTime, currentFrame, view, projection);
 
 		glBindVertexArray(cubeVAO);
@@ -195,59 +185,4 @@ int main()
 
 	glfwTerminate();
 	return 0;
-}
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-void processInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-
-	// Allows to change between fill and line mode
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-}
-
-// glfw: whenever the mouse moves, this callback is called
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
-{
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
