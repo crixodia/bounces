@@ -97,7 +97,7 @@ public:
 	void handleParticleCollision(Particle& p) {
 		Plane* nearestSurpassed = nearestSurpassedPlane(p.position, p.incidence);
 		if (nearestSurpassed != nullptr) {
-			std::cout << "Collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
+			std::cout << p.name << ": collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
 			Vect normal = nearestSurpassed->getNormal();
 			Vect reflex = nearestSurpassed->reflect(p.incidence);
 			Point pi = nearestSurpassed->incidence(p.position, p.incidence);

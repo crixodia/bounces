@@ -99,27 +99,27 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-
-	unsigned int cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
-	Shader cubeShader("shaders/cube.vs", "shaders/cube.fs");
+
+	initParticleBuffers();
 
 	// Particle Definition
 	Particle particle = Particle(
-		cubeShader, 5, 0,
-		{ 0.9, 0.2, 0.3 },
+		1,
+		0.01,
+		{ 0.5, 0.5, 0.5 },
 		Vect({ -1.0, -0.1, 0.3 })
 	);
+
+	// Particle Definition
+	Particle particle2 = Particle(
+		0.1,
+		0.01,
+		{ 0.9, 0.2, 0.3 },
+		Vect({ 1.0, 0.1, 0.3 })
+	);
+	particle2.setParticleColor(glm::vec4(180.0f / 180.0f, 180.0f / 255.0f, 0.0f, 0.0f));
+	particle2.setName("Particle 2");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -159,19 +159,11 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 
-		// Draw a line from 1 1 1 to -1 -1 -1
-		roomShader.setVec4("triangle_color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		glBindVertexArray(VAO[0]);
-		glDrawArrays(GL_LINES, 0, 2);
-
 		particle.transform(deltaTime, currentFrame, view, projection);
-
-		glBindVertexArray(cubeVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glDrawArrays(GL_TRIANGLES, 0, particle.size);
-		glBindVertexArray(0);
+		particle2.transform(deltaTime, currentFrame, view, projection);
 
 		room.handleParticleCollision(particle);
+		room.handleParticleCollision(particle2);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -180,8 +172,7 @@ int main()
 	glDeleteVertexArrays(n, VAO);
 	glDeleteBuffers(n, VBO);
 
-	glDeleteVertexArrays(1, &cubeVAO);
-	glDeleteBuffers(1, &cubeVBO);
+	deleteParticleBuffers();
 
 	glfwTerminate();
 	return 0;
