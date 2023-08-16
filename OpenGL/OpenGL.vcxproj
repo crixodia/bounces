@@ -164,6 +164,7 @@
     <ClInclude Include="receptor.h" />
     <ClInclude Include="room.h" />
     <ClInclude Include="triangle.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="vect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

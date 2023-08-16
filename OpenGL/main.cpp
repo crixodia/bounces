@@ -105,18 +105,18 @@ int main()
 
 	// Particle Definition
 	Particle particle = Particle(
-		1,
-		0.01,
-		{ 0.5, 0.5, 0.5 },
-		Vect({ -1.0, -0.1, 0.3 })
+		1.0,					// Energy
+		0.0,					// Loss
+		{ 0.9, 0.2, 0.3 },		// Init position
+		Vect({ 1.0, 0.1, 0.3 }) // Init direction
 	);
 
 	// Particle Definition
 	Particle particle2 = Particle(
-		0.1,
-		0.01,
-		{ 0.9, 0.2, 0.3 },
-		Vect({ 1.0, 0.1, 0.3 })
+		0.9,					// Energy
+		0.0,					// Loss
+		{ 0.9, 0.2, 0.3 },		// Init position
+		Vect({ 1.0, 0.1, 0.3 }) // Init direction
 	);
 	particle2.setParticleColor(glm::vec4(180.0f / 180.0f, 180.0f / 255.0f, 0.0f, 0.0f));
 	particle2.setName("Particle 2");
@@ -159,8 +159,12 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 
+		if (!particlesState) {
+			deltaTime = 0;
+		}
+
 		particle.transform(deltaTime, currentFrame, view, projection);
-		particle2.transform(deltaTime, currentFrame, view, projection);
+		particle2.transform(deltaTime, currentFrame, view, projection);		
 
 		room.handleParticleCollision(particle);
 		room.handleParticleCollision(particle2);

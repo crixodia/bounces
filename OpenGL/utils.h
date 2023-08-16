@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 #include <learnopengl/camera.h>
+#include "particle.h"
 
 // Camera
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -13,6 +14,9 @@ bool firstMouse = true;
 // Timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// Animation
+bool particlesState = true;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window)
@@ -33,6 +37,13 @@ void processInput(GLFWwindow* window)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	// If particlesState is true, particles are animated
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		particlesState = true;
+
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+		particlesState = false;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

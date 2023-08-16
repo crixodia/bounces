@@ -86,6 +86,7 @@ public:
 	int size;
 	std::string name;
 
+
 	Particle(float* v, double e, double l, Point p, Vect i) {
 		vertices = v;
 		energy = e;
@@ -129,12 +130,13 @@ public:
 
 		glm::mat4 particleTransform = glm::mat4(1.0f);
 		position = position + incidence.asPoint() * deltaTime * energy;
-		particleTransform = glm::translate(particleTransform, glm::vec3(position.x, position.y, position.z));
-		particleTransform = glm::scale(particleTransform, glm::vec3(0.03f) * (allowScale ? energy / 5.0f : 1));
 
+		particleTransform = glm::translate(particleTransform, glm::vec3(position.x, position.y, position.z));
+		particleTransform = glm::scale(particleTransform, glm::vec3(0.04f) * (allowScale ? energy / 5.0f : 1));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(0.0f, 0.0f, 1.0f));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(1.0f, 0.0f, 0.0f));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(0.0f, 1.0f, 0.0f));
+
 
 		shader.setMat4("model", particleTransform);
 		shader.setMat4("view", view);
