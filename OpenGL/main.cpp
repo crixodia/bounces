@@ -17,6 +17,7 @@
 #include "plane.h"
 #include "vect.h"
 #include "particle.h"
+#include "source.h"
 
 // Screen size
 const unsigned int SCR_WIDTH = 1280;
@@ -68,7 +69,7 @@ int main()
 	};
 
 	// Triangle numbers
-	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -101,6 +102,9 @@ int main()
 
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
 
+	initSourceBuffers();
+	Source source = Source({ 0.0, 0.0, 0.0 });
+
 	initParticleBuffers();
 
 	// Particle Definition
@@ -111,7 +115,6 @@ int main()
 		Vect({ 1.0, 0.1, 0.3 }) // Init direction
 	);
 
-	// Particle Definition
 	Particle particle2 = Particle(
 		0.9,					// Energy
 		0.0,					// Loss
@@ -163,9 +166,14 @@ int main()
 			deltaTime = 0;
 		}
 
-		particle.transform(deltaTime, currentFrame, view, projection);
-		particle2.transform(deltaTime, currentFrame, view, projection);		
+		// Source
+		source.transform(deltaTime, currentFrame, view, projection);
 
+		// Particles
+		particle.transform(deltaTime, currentFrame, view, projection);
+		particle2.transform(deltaTime, currentFrame, view, projection);
+
+		// Collisions
 		room.handleParticleCollision(particle);
 		room.handleParticleCollision(particle2);
 
@@ -176,6 +184,7 @@ int main()
 	glDeleteVertexArrays(n, VAO);
 	glDeleteBuffers(n, VBO);
 
+	deleteSourceBuffers();
 	deleteParticleBuffers();
 
 	glfwTerminate();

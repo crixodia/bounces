@@ -67,10 +67,13 @@
     <ClInclude Include="room.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="receptor.h">
+    <ClInclude Include="particle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="particle.h">
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

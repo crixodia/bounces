@@ -7,6 +7,7 @@
 
 #include <learnopengl/shader.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 unsigned int cubeVAO;
 unsigned int cubeVBO;
@@ -143,7 +144,7 @@ public:
 		shader.setMat4("projection", projection);
 
 		glBindVertexArray(cubeVAO);
-		glActiveTexture(GL_TEXTURE0);
+		//glActiveTexture(GL_TEXTURE0);
 		glDrawArrays(GL_TRIANGLES, 0, size);
 		glBindVertexArray(0);
 	}
