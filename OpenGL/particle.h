@@ -133,7 +133,7 @@ public:
 		position = position + incidence.asPoint() * deltaTime * energy;
 
 		particleTransform = glm::translate(particleTransform, glm::vec3(position.x, position.y, position.z));
-		particleTransform = glm::scale(particleTransform, glm::vec3(0.04f) * (allowScale ? energy / 5.0f : 1));
+		particleTransform = glm::scale(particleTransform, glm::vec3(0.02f) * (allowScale ? energy / 5.0f : 1));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(0.0f, 0.0f, 1.0f));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(1.0f, 0.0f, 0.0f));
 		particleTransform = glm::rotate(particleTransform, currentFrame * energy, glm::vec3(0.0f, 1.0f, 0.0f));

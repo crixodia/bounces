@@ -16,7 +16,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // Animation
-bool particlesState = true;
+bool particlesState = false;
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 void processInput(GLFWwindow* window)

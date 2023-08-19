@@ -69,7 +69,7 @@ int main()
 	};
 
 	// Triangle numbers
-	const int n = 800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -103,26 +103,9 @@ int main()
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
 
 	initSourceBuffers();
-	Source source = Source({ 0.0, 0.0, 0.0 });
+	Source source = Source({ 0.0, 0.0, 0.0 }, 20, 1, 0.1);
 
 	initParticleBuffers();
-
-	// Particle Definition
-	Particle particle = Particle(
-		1.0,					// Energy
-		0.0,					// Loss
-		{ 0.9, 0.2, 0.3 },		// Init position
-		Vect({ 1.0, 0.1, 0.3 }) // Init direction
-	);
-
-	Particle particle2 = Particle(
-		0.9,					// Energy
-		0.0,					// Loss
-		{ 0.9, 0.2, 0.3 },		// Init position
-		Vect({ 1.0, 0.1, 0.3 }) // Init direction
-	);
-	particle2.setParticleColor(glm::vec4(180.0f / 180.0f, 180.0f / 255.0f, 0.0f, 0.0f));
-	particle2.setName("Particle 2");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -162,6 +145,7 @@ int main()
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 
+
 		if (!particlesState) {
 			deltaTime = 0;
 		}
@@ -169,13 +153,13 @@ int main()
 		// Source
 		source.transform(deltaTime, currentFrame, view, projection);
 
-		// Particles
-		particle.transform(deltaTime, currentFrame, view, projection);
-		particle2.transform(deltaTime, currentFrame, view, projection);
+		for (int i = 0; i < 20; i++) {
+			// Particles
+			source.particles[i].transform(deltaTime, currentFrame, view, projection);
 
-		// Collisions
-		room.handleParticleCollision(particle);
-		room.handleParticleCollision(particle2);
+			// Collisions
+			room.handleParticleCollision(source.particles[i]);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
