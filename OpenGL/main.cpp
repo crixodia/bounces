@@ -102,10 +102,14 @@ int main()
 
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
 
-	initSourceBuffers();
-	Source source = Source({ 0.0, 0.0, 0.0 }, 20, 1, 0.1);
-
 	initParticleBuffers();
+
+	int MAX_PARTICLES = 20;
+	float ENERGY = 1.0f;
+	float LOSS = 0.2f;
+	Point POSITION = { 0, 0, 0 };
+
+	Source source = Source(POSITION, MAX_PARTICLES, ENERGY, LOSS);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -153,7 +157,7 @@ int main()
 		// Source
 		source.transform(deltaTime, currentFrame, view, projection);
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < MAX_PARTICLES; i++) {
 			// Particles
 			source.particles[i].transform(deltaTime, currentFrame, view, projection);
 

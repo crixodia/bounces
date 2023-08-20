@@ -56,7 +56,9 @@ public:
 	Vect getNormal() const {
 		Vect v1(a, b);
 		Vect v2(a, c);
-		return v1 ^ v2;
+		Point n = (v1 ^ v2).unit().asPoint();
+		Point start = getBarycenter();
+		return Vect(start, start + n);
 	}
 
 	Point getBarycenter() const {
@@ -85,7 +87,7 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Triangle& t) {
-		os << t.getA() << ":" << t.getB() << ":" << t.getC();
+		os << "Polygon(" << t.getA() << "," << t.getB() << "," << t.getC() << "," << t.getA() << ")";
 		return os;
 	}
 };

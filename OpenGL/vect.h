@@ -97,7 +97,7 @@ public:
 	}
 
 	Vect unit() const {
-		return Vect(p1, p2) / length();
+		return Vect(p1/length(), p2/length());
 	}
 
 	double angle(const Vect& v) const {
@@ -113,7 +113,7 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Vect& v) {
-		os << "Vect: " << v.p1 << " -> " << v.p2;
+		os << "Vector(" << v.p1 << "," << v.p2 << ")";
 		return os;
 	}
 };

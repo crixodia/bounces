@@ -14,88 +14,98 @@ unsigned int sourceVAO;
 unsigned int sourceVBO;
 
 float icosahedron[] = {
-	0.35, 0.2, 1.06,
-	-0.35, 0.2, 1.06,
-	0.0, -0.4, 1.06,
+	0.112, -0.036, 0.068,
+	0.008, -0.036, 0.068,
+	0.06, -0.126, 0.068,
 
-	0.57, 0.33, 0.4,
-	0.57, -0.32, 0.65,
-	0.35, 0.2, 1.06,
+	0.146, -0.016, -0.031,
+	0.112, -0.036, 0.068,
+	0.146, -0.114, 0.006,
 
-	0, -0.4, 1.06,
-	0.35, 0.2, 1.06,
-	0.57, -0.32, 0.65,
+	0.06, -0.126, 0.068,
+	0.146, -0.114, 0.006,
+	0.112, -0.036, 0.068,
 
-	0.35, 0.2, 1.06,
-	-0.35, 0.2, 1.06,
-	0, 0.66, 0.65,
+	0.112, -0.036, 0.068,
+	0.06, 0.033, 0.006,
+	0.008, -0.036, 0.068,
 
-	0.35, 0.2, 1.06,
-	0, 0.66, 0.65,
-	0.57, 0.33, 0.4,
+	0.112, -0.036, 0.068,
+	0.146, -0.016, -0.031,
+	0.06, 0.033, 0.006,
 
-	0, -0.4, 1.06,
-	-0.35, 0.2, 1.06,
-	-0.57, -0.32, 0.65,
+	0.06, -0.126, 0.068,
+	0.008, -0.036, 0.068,
+	-0.025, -0.114, 0.006,
 
-	-0.35, 0.2, 1.06,
-	0, 0.66, 0.65,
-	-0.57, 0.33, 0.4,
+	0.008, -0.036, 0.068,
+	0.06, 0.033, 0.006,
+	-0.025, -0.016, -0.031,
 
-	-0.35, 0.2, 1.06,
-	-0.57, -0.32, 0.65,
-	-0.57, 0.33, 0.4,
+	0.008, -0.036, 0.068,
+	-0.025, -0.016, -0.031,
+	-0.025, -0.114, 0.006,
 
-	0, -0.4, 1.06,
-	-0.57, -0.32, 0.65,
-	0, -0.65, 0.4,
+	0.06, -0.126, 0.068,
+	-0.025, -0.114, 0.006,
+	0.06, -0.164, -0.031,
 
-	0, -0.4, 1.06,
-	0.57, -0.32, 0.65,
-	0, -0.65, 0.4,
+	0.06, -0.126, 0.068,
+	0.06, -0.164, -0.031,
+	0.146, -0.114, 0.006,
 
-	0, 0.41, 0,
-	-0.35, -0.2, 0,
-	0.35, -0.2, 0,
+	0.06, -0.005, -0.092,
+	0.112, -0.096, -0.092,
+	0.008, -0.096, -0.092,
 
-	0, 0.41, 0,
-	0.57, 0.33, 0.4,
-	0.35, -0.2, 0,
+	0.06, -0.005, -0.092,
+	0.146, -0.016, -0.031,
+	0.112, -0.096, -0.092,
 
-	0, 0.66, 0.65,
-	0, 0.41, 0,
-	0.57, 0.33, 0.4,
+	0.06, 0.033, 0.006,
+	0.146, -0.016, -0.031,
+	0.06, -0.005, -0.092,
 
-	0.57, 0.33, 0.4,
-	0.35, -0.2, 0,
-	0.57, -0.32, 0.65,
+	0.146, -0.016, -0.031,
+	0.146, -0.114, 0.006,
+	0.112, -0.096, -0.092,
 
-	0, 0.41, 0,
-	-0.57, 0.33, 0.4,
-	-0.35, -0.2, 0,
+	0.06, -0.005, -0.092,
+	0.008, -0.096, -0.092,
+	-0.025, -0.016, -0.031,
 
-	0, 0.66, 0.65,
-	0.57, 0.33, 0.4,
-	0, 0.41, 0,
+	0.06, 0.033, 0.006,
+	0.146, -0.016, -0.031,
+	0.06, -0.005, -0.092,
 
-	-0.57, 0.33, 0.4,
-	-0.35, -0.2, 0,
-	-0.57, -0.32, 0.65,
+	-0.025, -0.016, -0.031,
+	0.008, -0.096, -0.092,
+	-0.025, -0.114, 0.006,
 
-	0, -0.65, 0.4,
-	0.35, -0.2, 0,
-	0.57, -0.32, 0.65,
+	0.06, -0.164, -0.031,
+	0.112, -0.096, -0.092,
+	0.146, -0.114, 0.006,
 
-	-0.35, -0.2, 0,
-	-0.57, -0.32, 0.65,
-	0, -0.65, 0.4,
+	0.008, -0.096, -0.092,
+	0.06, -0.164, -0.031,
+	-0.025, -0.114, 0.006,
 
-	0.35, -0.2, 0,
-	-0.35, -0.2, 0,
-	0, -0.65, 0.4
+	0.112, -0.096, -0.092,
+	0.06, -0.164, -0.031,
+	0.008, -0.096, -0.092,
 };
 
-void initSourceBuffers() {
+void initSourceBuffers(float scale, Point translate) {
+	for (int i = 0; i < 180; i++) {
+		icosahedron[i] *= scale;
+		if (i % 3 == 0)
+			icosahedron[i] += translate.x;
+		else if (i % 3 == 1)
+			icosahedron[i] += translate.y;
+		else
+			icosahedron[i] += translate.z;
+	}
+
 	glGenVertexArrays(1, &sourceVAO);
 	glGenBuffers(1, &sourceVBO);
 	glBindVertexArray(sourceVAO);
@@ -128,8 +138,6 @@ private:
 		}
 	}
 public:
-	Point position;
-	float* vertices;
 	int size;
 	std::string name;
 	int numParticles;
@@ -142,7 +150,8 @@ public:
 	std::vector<Triangle> triangles;
 
 	Source(Point p, int n, float e, float l) {
-		vertices = icosahedron;
+		initSourceBuffers(1.0f, p);
+
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
@@ -151,7 +160,6 @@ public:
 		energy = e;
 		loss = l;
 
-		position = p;
 		numParticles = n;
 		genTriangles();
 
@@ -160,7 +168,7 @@ public:
 			for (int j = 0; j < tempDirs.size(); j++) {
 				// rand between 0.0 and 0.3, Just for testing - Remove when it is done
 				float randX = (float)rand() / RAND_MAX * 0.3f;
-				Particle temp = Particle(energy, loss, triangles[i].getBarycenter(), tempDirs[j]);
+				Particle temp = Particle(energy, loss + randX, triangles[i].getBarycenter(), tempDirs[j]);
 				particles.push_back(temp);
 			}
 		}
@@ -170,9 +178,8 @@ public:
 		std::vector<Vect> vects;
 		for (int i = 0; i < vectPerTriangle; i++) {
 			vects.push_back(t.getNormal()); // Just for testing
-			std::cout << "Normal: " << t << " " << t.getNormal() << std::endl;
+			// std::cout << "{" << t << "," << t.getNormal() << "}\n";
 		}
-
 		return vects;
 	}
 
@@ -189,9 +196,6 @@ public:
 		shader.setVec4("color", sourceColor);
 
 		glm::mat4 sourceTransform = glm::mat4(1.0f);
-
-		sourceTransform = glm::translate(sourceTransform, glm::vec3(position.x, position.y, position.z));
-		sourceTransform = glm::scale(sourceTransform, glm::vec3(0.1f));
 
 		shader.setMat4("model", sourceTransform);
 		shader.setMat4("view", view);
