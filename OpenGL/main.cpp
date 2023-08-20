@@ -102,14 +102,15 @@ int main()
 
 	Shader roomShader("shaders/room.vs", "shaders/room.fs");
 
-	initParticleBuffers();
+	Source::initSourceBuffers();
+	Particle::initParticleBuffers();
 
-	int MAX_PARTICLES = 20;
+	int MAX_PARTICLES = 200;
 	float ENERGY = 1.0f;
-	float LOSS = 0.5f;
-	Point POSITION = { 0, 0, 0 };
+	float LOSS = 0.0f;
 
-	Source source = Source(POSITION, MAX_PARTICLES, ENERGY, LOSS);
+	Source source = Source({ 0.3, 0.3, 0.3 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
+	Source source2 = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -156,13 +157,16 @@ int main()
 
 		// Source
 		source.transform(deltaTime, currentFrame, view, projection);
+		source2.transform(deltaTime, currentFrame, view, projection);
 
 		for (int i = 0; i < MAX_PARTICLES; i++) {
 			// Particles
 			source.particles[i].transform(deltaTime, currentFrame, view, projection);
+			source2.particles[i].transform(deltaTime, currentFrame, view, projection);
 
 			// Collisions
 			room.handleParticleCollision(source.particles[i]);
+			room.handleParticleCollision(source2.particles[i]);
 		}
 
 		glfwSwapBuffers(window);
@@ -172,8 +176,8 @@ int main()
 	glDeleteVertexArrays(n, VAO);
 	glDeleteBuffers(n, VBO);
 
-	deleteSourceBuffers();
-	deleteParticleBuffers();
+	Source::deleteSourceBuffers();
+	Particle::deleteParticleBuffers();
 
 	glfwTerminate();
 	return 0;

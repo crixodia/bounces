@@ -96,33 +96,6 @@ float icosahedron[] = {
 	0.008, -0.096, -0.092,
 };
 
-void initSourceBuffers(float scale, Point translate) {
-	for (int i = 0; i < 180; i++) {
-		icosahedron[i] *= scale;
-		if (i % 3 == 0)
-			icosahedron[i] += translate.x + scale * errorTranslation.x;
-		else if (i % 3 == 1)
-			icosahedron[i] += translate.y + scale * errorTranslation.y;
-		else
-			icosahedron[i] += translate.z + scale * errorTranslation.z;
-	}
-
-	glGenVertexArrays(1, &sourceVAO);
-	glGenBuffers(1, &sourceVBO);
-	glBindVertexArray(sourceVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, sourceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(icosahedron), &icosahedron, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
-}
-
-void deleteSourceBuffers() {
-	glDeleteVertexArrays(1, &sourceVAO);
-	glDeleteBuffers(1, &sourceVBO);
-}
-
 class Source {
 private:
 	Shader shader;
@@ -131,9 +104,13 @@ private:
 	void genTriangles() {
 		int j = 0;
 		for (int i = 0; i < 20; i++) {
-			Point a = Point(icosahedron[j], icosahedron[j + 1], icosahedron[j + 2]);
-			Point b = Point(icosahedron[j + 3], icosahedron[j + 4], icosahedron[j + 5]);
-			Point c = Point(icosahedron[j + 6], icosahedron[j + 7], icosahedron[j + 8]);
+			float sx = position.x;
+			float sy = position.y;
+			float sz = position.z;
+
+			Point a = Point(icosahedron[j] + sx, icosahedron[j + 1] + sy, icosahedron[j + 2] + sz) * scale;
+			Point b = Point(icosahedron[j + 3] + sx, icosahedron[j + 4] + sy, icosahedron[j + 5] + sz) * scale;
+			Point c = Point(icosahedron[j + 6] + sx, icosahedron[j + 7] + sy, icosahedron[j + 8] + sz) * scale;
 			triangles.push_back(Triangle(a, b, c));
 			j += 9;
 		}
@@ -142,7 +119,8 @@ public:
 	int size;
 	std::string name;
 	int numParticles;
-
+	float scale;
+	Point position;
 	float energy;
 	float loss;
 
@@ -150,17 +128,34 @@ public:
 	std::vector<Point> positions;
 	std::vector<Triangle> triangles;
 
-	Source(Point p, int n, float e, float l) {
-		initSourceBuffers(1.0f, p);
+	static void initSourceBuffers() {
+		glGenVertexArrays(1, &sourceVAO);
+		glGenBuffers(1, &sourceVBO);
+		glBindVertexArray(sourceVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, sourceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(icosahedron), &icosahedron, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+
+	static void deleteSourceBuffers() {
+		glDeleteVertexArrays(1, &sourceVAO);
+		glDeleteBuffers(1, &sourceVBO);
+	}
+
+	Source(Point p, int n, float e, float l, float s) {
+		initSourceBuffers();
 
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		sourceColor = glm::vec4(246.0f / 255.0f, 148.0f / 255.0f, 0.0f, 0.0f);
-
+		scale = s;
 		energy = e;
 		loss = l;
-
+		position = p + (errorTranslation * scale);
 		numParticles = n;
 		genTriangles();
 
@@ -168,8 +163,8 @@ public:
 			std::vector<Vect> tempDirs = genParticlesDirection(triangles[i], numParticles / triangles.size());
 			for (int j = 0; j < tempDirs.size(); j++) {
 				// rand between 0.0 and 0.3, Just for testing - Remove when it is done
-				// float randX = (float)rand() / RAND_MAX * 0.3f;
-				Particle temp = Particle(energy, loss, triangles[i].getBarycenter(), tempDirs[j]);
+				float randX = (float)rand() / RAND_MAX * 0.3f;
+				Particle temp = Particle(energy, loss + randX, triangles[i].getBarycenter(), tempDirs[j]);
 				particles.push_back(temp);
 			}
 		}
@@ -197,6 +192,9 @@ public:
 		shader.setVec4("color", sourceColor);
 
 		glm::mat4 sourceTransform = glm::mat4(1.0f);
+
+		sourceTransform = glm::translate(sourceTransform, glm::vec3(position.x, position.y, position.z));
+		sourceTransform = glm::scale(sourceTransform, glm::vec3(scale));
 
 		shader.setMat4("model", sourceTransform);
 		shader.setMat4("view", view);
