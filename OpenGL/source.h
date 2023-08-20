@@ -13,6 +13,7 @@
 unsigned int sourceVAO;
 unsigned int sourceVBO;
 
+const Point errorTranslation = { -0.061, 0.066, 0.025 };
 float icosahedron[] = {
 	0.112, -0.036, 0.068,
 	0.008, -0.036, 0.068,
@@ -99,11 +100,11 @@ void initSourceBuffers(float scale, Point translate) {
 	for (int i = 0; i < 180; i++) {
 		icosahedron[i] *= scale;
 		if (i % 3 == 0)
-			icosahedron[i] += translate.x;
+			icosahedron[i] += translate.x + scale * errorTranslation.x;
 		else if (i % 3 == 1)
-			icosahedron[i] += translate.y;
+			icosahedron[i] += translate.y + scale * errorTranslation.y;
 		else
-			icosahedron[i] += translate.z;
+			icosahedron[i] += translate.z + scale * errorTranslation.z;
 	}
 
 	glGenVertexArrays(1, &sourceVAO);
@@ -167,8 +168,8 @@ public:
 			std::vector<Vect> tempDirs = genParticlesDirection(triangles[i], numParticles / triangles.size());
 			for (int j = 0; j < tempDirs.size(); j++) {
 				// rand between 0.0 and 0.3, Just for testing - Remove when it is done
-				float randX = (float)rand() / RAND_MAX * 0.3f;
-				Particle temp = Particle(energy, loss + randX, triangles[i].getBarycenter(), tempDirs[j]);
+				// float randX = (float)rand() / RAND_MAX * 0.3f;
+				Particle temp = Particle(energy, loss, triangles[i].getBarycenter(), tempDirs[j]);
 				particles.push_back(temp);
 			}
 		}

@@ -106,7 +106,7 @@ int main()
 
 	int MAX_PARTICLES = 20;
 	float ENERGY = 1.0f;
-	float LOSS = 0.2f;
+	float LOSS = 0.5f;
 	Point POSITION = { 0, 0, 0 };
 
 	Source source = Source(POSITION, MAX_PARTICLES, ENERGY, LOSS);
