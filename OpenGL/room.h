@@ -5,6 +5,8 @@
 #include "plane.h"
 #include "particle.h"
 
+constexpr auto V_SON = 340.0f;
+
 class Room {
 public:
 	Plane* planes;
@@ -125,6 +127,40 @@ public:
 			}
 		}
 		return nearest;
+	}
+
+	std::vector<Point> getBarycenters() {
+		std::vector<Point> barycenters;
+		for (int i = 0; i < numPlanes; i++) {
+			for (int j = 0; j < numTriangles; j++) {
+				barycenters.push_back(planes[i].triangles[j].getBarycenter());
+			}
+		}
+		return barycenters;
+	}
+
+	void energyTrans() {
+		std::vector<Point> barycenters = getBarycenters();
+		std::vector<std::vector<double>> distances;
+		for (int i = 0; i < barycenters.size(); i++) {
+			std::vector<double> row;
+			for (int j = 0; j < barycenters.size(); j++) {
+				row.push_back(Vect(barycenters[i], barycenters[j]).length());
+			}
+			distances.push_back(row);
+		}
+
+		std::vector<std::vector<double>> time;
+		for (int i = 0; i < barycenters.size(); i++) {
+			std::vector<double> row;
+			for (int j = 0; j < barycenters.size(); j++) {
+				row.push_back(distances[i][j] / V_SON);
+			}
+			time.push_back(row);
+		}
+
+
+		std::vector<std::vector<double>> energyPr;
 	}
 
 };

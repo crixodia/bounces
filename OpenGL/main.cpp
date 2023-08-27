@@ -69,7 +69,7 @@ int main()
 	};
 
 	// Triangle numbers
-	const int n = 1800; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 2; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -105,9 +105,9 @@ int main()
 	Source::initSourceBuffers();
 	Particle::initParticleBuffers();
 
-	int MAX_PARTICLES = 200;
+	int MAX_PARTICLES = 400;
 	float ENERGY = 1.0f;
-	float LOSS = 0.0f;
+	float LOSS = 0.2f;
 
 	Source source = Source({ 0.3, 0.3, 0.3 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
 	Source source2 = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
@@ -163,7 +163,7 @@ int main()
 			// Particles
 			source.particles[i].transform(deltaTime, currentFrame, view, projection);
 			source2.particles[i].transform(deltaTime, currentFrame, view, projection);
-
+			
 			// Collisions
 			room.handleParticleCollision(source.particles[i]);
 			room.handleParticleCollision(source2.particles[i]);

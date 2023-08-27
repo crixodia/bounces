@@ -33,8 +33,10 @@ public:
 	double getJ() const { return p2.y - p1.y; }
 	double getK() const { return p2.z - p1.z; }
 
-	void setP1(const Point& pp1) { p1 = pp1; }
-	void setP2(const Point& pp2) { p2 = pp2; }
+	void setStart(const Point& p) {
+		p2 = p + asPoint();
+		p1 = p;
+	}
 
 	int operator==(const Vect& v) const {
 		return p1 == v.p1 && p2 == v.p2 ? 1 : 0;
@@ -97,7 +99,7 @@ public:
 	}
 
 	Vect unit() const {
-		return Vect(p1/length(), p2/length());
+		return Vect(p1 / length(), p2 / length());
 	}
 
 	double angle(const Vect& v) const {
@@ -115,6 +117,24 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Vect& v) {
 		os << "Vector(" << v.p1 << "," << v.p2 << ")";
 		return os;
+	}
+
+	// https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+	static Vect rodriges(Vect k, Vect v, double theta) {
+		k = k.unit();
+		Vect r1 = v * cos(theta);
+		Vect r2 = (k ^ v) * sin(theta);
+		Vect r3 = k * (k * v) * (1 - cos(theta));
+		return r1 + r2 + r3;
+	}
+
+	// https://en.wikipedia.org/wiki/Rotation_matrix
+	static Vect rotate(Vect u, Vect v, double theta) {
+		u = u.unit();
+		Vect r1 = u * (u * v);
+		Vect r2 = ((u ^ v) * cos(theta)) ^ u;
+		Vect r3 = (u ^ v) * sin(theta);
+		return r1 + r2 + r3;
 	}
 };
 

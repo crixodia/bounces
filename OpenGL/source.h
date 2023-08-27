@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+constexpr auto PI = 3.14159265358979323846;
+
 unsigned int sourceVAO;
 unsigned int sourceVBO;
 
@@ -163,8 +165,8 @@ public:
 			std::vector<Vect> tempDirs = genParticlesDirection(triangles[i], numParticles / triangles.size());
 			for (int j = 0; j < tempDirs.size(); j++) {
 				// rand between 0.0 and 0.3, Just for testing - Remove when it is done
-				float randX = (float)rand() / RAND_MAX * 0.3f;
-				Particle temp = Particle(energy, loss + randX, triangles[i].getBarycenter(), tempDirs[j]);
+				// float randX = (float)rand() / RAND_MAX * 0.3f;
+				Particle temp = Particle(energy, loss, triangles[i].getBarycenter(), tempDirs[j]);
 				particles.push_back(temp);
 			}
 		}
@@ -172,9 +174,22 @@ public:
 
 	std::vector<Vect> genParticlesDirection(Triangle t, int vectPerTriangle) {
 		std::vector<Vect> vects;
-		for (int i = 0; i < vectPerTriangle; i++) {
-			vects.push_back(t.getNormal()); // Just for testing
-			// std::cout << "{" << t << "," << t.getNormal() << "}\n";
+
+		const float angleSep = 15;
+
+		Vect normal = t.getNormal();
+		vects.push_back(normal);
+
+		Vect perpendicular = Vect(t.getA(), t.getB()).unit();
+		perpendicular.setStart(t.getBarycenter());
+
+		Vect firstVect = Vect::rotate(perpendicular, normal, angleSep * PI / 180).unit();
+		firstVect.setStart(t.getBarycenter());
+
+		for (int i = 0; i < vectPerTriangle - 1; i++) {
+			Vect rot = Vect::rodriges(normal, firstVect, 2 * i * PI / (vectPerTriangle - 1));
+			rot.setStart(t.getBarycenter());
+			vects.push_back(rot);
 		}
 		return vects;
 	}
