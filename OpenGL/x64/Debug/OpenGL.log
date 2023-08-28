@@ -1,10 +1,8 @@
 ﻿  main.cpp
 D:\Repositories\bounces\OpenGL_Stuff\include\learnopengl\shader.h(58,40): warning C4101: 'e': unreferenced local variable
-D:\Repositories\bounces\OpenGL\plane.h(91,24): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-D:\Repositories\bounces\OpenGL\particle.h(92,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Repositories\bounces\OpenGL\particle.h(93,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Repositories\bounces\OpenGL\particle.h(103,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Repositories\bounces\OpenGL\particle.h(104,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\plane.h(103,24): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+D:\Repositories\bounces\OpenGL\particle.h(101,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\particle.h(102,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\Repositories\bounces\OpenGL\source.h(22,2): warning C4305: 'initializing': truncation from 'double' to 'float'
 D:\Repositories\bounces\OpenGL\source.h(22,10): warning C4305: 'initializing': truncation from 'double' to 'float'
 D:\Repositories\bounces\OpenGL\source.h(22,17): warning C4305: 'initializing': truncation from 'double' to 'float'

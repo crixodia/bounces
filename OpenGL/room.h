@@ -185,6 +185,7 @@ public:
 		for (int i = 0; i < numPlanes; i++) {
 			for (int j = 0; j < numTriangles; j++) {
 				triangles.push_back(planes[i].triangles[j]);
+				triangles[i].planeNormal = planes[i].getNormal();
 			}
 		}
 		return triangles;
@@ -198,9 +199,55 @@ public:
 	 * @return Ángulo sólido
 	 */
 	double solidAngle(Triangle from, Triangle to, double distance) {
-		double areaFrom = from.area();
-		double areaTo = to.area();
-		return (areaFrom * areaTo) / (distance * distance);
+		Point baricenterFrom = from.getBarycenter();
+
+		Vect ABc = Vect(baricenterFrom, to.getA()).unit();
+		Vect BBc = Vect(baricenterFrom, to.getB()).unit();
+		Vect CBc = Vect(baricenterFrom, to.getC()).unit();
+
+		ABc.setStart(baricenterFrom);
+		BBc.setStart(baricenterFrom);
+		CBc.setStart(baricenterFrom);
+
+		Point A = ABc.p2;
+		Point B = BBc.p2;
+		Point C = CBc.p2;
+
+		Triangle temp = Triangle(A, B, C);
+		Vect newNormal = temp.getNormal();
+		newNormal.setStart(baricenterFrom);
+
+		Vect transBarycenter = newNormal * distance;
+		transBarycenter.setStart(baricenterFrom);
+
+		Point newBarycenter = transBarycenter.p2;
+
+		A = intersection(newBarycenter, newNormal, A, ABc);
+		B = intersection(newBarycenter, newNormal, B, BBc);
+		C = intersection(newBarycenter, newNormal, C, CBc);
+
+		return Triangle(A, B, C).area();
+	}
+
+	/**
+	 * @brief Devuelve el punto de intersección entre un plano y una recta.
+	 * @param plane Punto del plano
+	 * @param normal Vector normal del plano
+	 * @param line Punto de la recta
+	 * @param direction Vector dirección de la recta
+	 * @return Punto de intersección
+	 */
+	Point intersection(Point plane, Vect normal, Point line, Vect direction) {
+		Vect vectToPlane = Vect(line, plane);
+
+		// OJO: Si el vector dirección es paralelo al plano, no hay intersección	
+		if (direction * normal == 0) {
+			return Point(0, 0, 0);
+		}
+
+		double t = (vectToPlane * normal) / (direction * normal);
+		Point intersection = line + direction.asPoint() * t;
+		return intersection;
 	}
 
 	/**
@@ -218,6 +265,10 @@ public:
 		for (int i = 0; i < barycenters.size(); i++) {
 			std::vector<double> row;
 			for (int j = 0; j < barycenters.size(); j++) {
+				if (triangles[i].planeNormal == triangles[j].planeNormal) {
+					row.push_back(0);
+					continue;
+				}
 				row.push_back(Vect(barycenters[i], barycenters[j]).length());
 			}
 			distances.push_back(row);
@@ -227,6 +278,10 @@ public:
 		for (int i = 0; i < barycenters.size(); i++) {
 			std::vector<double> row;
 			for (int j = 0; j < barycenters.size(); j++) {
+				if (triangles[i].planeNormal == triangles[j].planeNormal) {
+					row.push_back(0);
+					continue;
+				}
 				row.push_back(distances[i][j] / V_SON);
 			}
 			time.push_back(row);
@@ -238,7 +293,7 @@ public:
 			double sumAreas = 0;
 
 			for (int j = 0; j < barycenters.size(); j++) {
-				if (distances[i][j] == 0) {
+				if (triangles[i].planeNormal == triangles[j].planeNormal) {
 					row.push_back(0);
 					continue;
 				}

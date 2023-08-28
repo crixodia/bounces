@@ -16,7 +16,7 @@ private:
 	Point b; /* Punto B del triángulo */
 	Point c; /* Punto C del triángulo */
 public:
-
+	Vect planeNormal;
 	/**
 	 * @brief Constructor por defecto de la clase
 	 */
@@ -55,6 +55,8 @@ public:
 	void setA(const Point& aa) { a = aa; } /* Configura el punto A del triángulo */
 	void setB(const Point& bb) { b = bb; } /* Configura el punto B del triángulo */
 	void setC(const Point& cc) { c = cc; } /* Configura el punto C del triángulo */
+
+	void setNormal(const Vect& n) { planeNormal = n; } /* Configura el vector normal del triángulo */
 
 	/**
 	 * @brief Sobrecarga del operador de igualdad.
