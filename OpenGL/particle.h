@@ -9,9 +9,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-unsigned int cubeVAO;
-unsigned int cubeVBO;
+unsigned int cubeVAO; /* Vertex Array Object */
+unsigned int cubeVBO; /* Vertex Buffer Object */
 
+/* Vertices del poliedro que forma la paráticula */
 float cubeVertices[] = {
 	-0.5f, -0.5f, -0.5f,
 	 0.5f, -0.5f, -0.5f,
@@ -58,17 +59,16 @@ float cubeVertices[] = {
 
 class Particle {
 private:
-	Shader shader;
-	bool allowScale;
-	glm::vec4 particleColor;
+	Shader shader; /* Shader para dibujar la partícula */
+	bool allowScale; /* Indica si se puede escalar la partícula */
+	glm::vec4 particleColor; /* Color de la partícula */
 public:
-	Point position;
-	Vect incidence;
-	float* vertices;
-	float energy;
-	float loss;
-	int size;
-	std::string name;
+	Point position;		/* Posición de la partícula */
+	Vect incidence;		/* Vector de incidencia de la partícula */
+	float energy;		/* Energía de la partícula */
+	float loss;			/* Pérdida de energía de la partícula */
+	int size;			/* Tamaño del poliedro que forma la partícula */
+	std::string name;	/* Nombre de la partícula */
 
 	static void initParticleBuffers() {
 		glGenVertexArrays(1, &cubeVAO);
@@ -82,13 +82,13 @@ public:
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
 	}
 
+
 	static void deleteParticleBuffers() {
 		glDeleteVertexArrays(1, &cubeVAO);
 		glDeleteBuffers(1, &cubeVBO);
 	}
 
 	Particle(float* v, double e, double l, Point p, Vect i) {
-		vertices = v;
 		energy = e;
 		loss = l;
 		position = p;
@@ -100,7 +100,6 @@ public:
 	}
 
 	Particle(double e, double l, Point p, Vect i) {
-		vertices = cubeVertices;
 		energy = e;
 		loss = l;
 		position = p;
@@ -149,7 +148,7 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Particle& p) {
-		os << p.name << ": " << p.vertices << " " << p.energy << " " << p.loss << " " << p.position << " " << p.incidence;
+		os << p.name << ": " << p.energy << " " << p.loss << " " << p.position << " " << p.incidence;
 		return os;
 	}
 

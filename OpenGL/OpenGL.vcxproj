@@ -158,6 +158,7 @@
     <None Include="shaders\room.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="csv.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="point.h" />

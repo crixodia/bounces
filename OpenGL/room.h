@@ -4,15 +4,25 @@
 #include <ostream>
 #include "plane.h"
 #include "particle.h"
+#include "csv.h"
 
-constexpr auto V_SON = 340.0f;
+constexpr auto V_SON = 340.0f; /* Constante de la velocidad del sonido en el aire */
 
+/*
+ * @brief Clase que representa una habitación
+ * @details Una habitación está formada por un conjunto de planos que la delimitan
+ */
 class Room {
 public:
-	Plane* planes;
-	int numPlanes;
-	int numTriangles;
+	Plane* planes;		/* Planos que delimitan la habitación */
+	int numPlanes;		/* Número de planos que delimitan la habitación */
+	int numTriangles;	/* Número de triángulos que forman los planos */
 
+	/**
+	 * @brief Constructor de la clase Room
+	 * @param nt Número de triángulos que forman los planos
+	 * @param np Número de planos que delimitan la habitación
+	 */
 	Room(int nt, int np) {
 		numTriangles = nt;
 		numPlanes = np;
@@ -25,6 +35,9 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Genera una habitación en forma de cubo
+	 */
 	void genCube() {
 		Point* floorPoints = new Point[4]{ {-1, -1, 1}, {-1, -1, -1}, {1, -1, 1} ,{1, -1, -1} };
 		Plane floor = Plane(floorPoints, 4, numTriangles);
@@ -59,6 +72,10 @@ public:
 
 	}
 
+	/**
+	 * @brief Devuelve los vectores normales de todos los planos que constituyen la habitación
+	 * @return Array de vectores normales
+	 */
 	Vect* getNormals() {
 		Vect* normals = new Vect[numPlanes];
 		for (int i = 0; i < numPlanes; i++) {
@@ -67,6 +84,10 @@ public:
 		return normals;
 	}
 
+	/**
+	 * @brief Devuelve los puntos de todos los planos que constituyen la habitación
+	 * @return Array de puntos
+	 */
 	double** getAllVertices() {
 		int tnt = numTriangles * numPlanes;
 		double** vertices = new double* [tnt];
@@ -87,6 +108,10 @@ public:
 	}
 
 
+	/**
+	 * @brief Devuelve el puntero del plano candidato a ser el primero en ser alcanzado por una partícula
+	 * @return Array de planos
+	 */
 	Plane* SurpassedPlane(const Point& p) {
 		for (int i = 0; i < numPlanes; i++) {
 			if (planes[i].hasSurpassed(p)) {
@@ -96,6 +121,10 @@ public:
 		return nullptr;
 	}
 
+	/**
+	 * @brief Controla las colisiones de una partícula con los planos de la habitación en base al método de reflexiones.
+	 * @param p Puntero a la partícula
+	 */
 	void handleParticleCollision(Particle& p) {
 		Plane* nearestSurpassed = nearestSurpassedPlane(p.position, p.incidence);
 		if (nearestSurpassed != nullptr) {
@@ -109,6 +138,10 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Devuelve el puntero del plano más cercano a una partícula
+	 * @return Puntero al plano más cercano
+	 */
 	Plane* nearestSurpassedPlane(const Point& p, const Vect& incidence) {
 		Plane* nearest = &planes[0];
 
@@ -129,6 +162,10 @@ public:
 		return nearest;
 	}
 
+	/**
+	 * @brief Devuelve los baricentros de los triángulos que constituyen la habitación.
+	 * @return Array de puntos
+	 */
 	std::vector<Point> getBarycenters() {
 		std::vector<Point> barycenters;
 		for (int i = 0; i < numPlanes; i++) {
@@ -139,8 +176,44 @@ public:
 		return barycenters;
 	}
 
+	/**
+	 * @brief Devuelve los triángulos que constituyen la habitación.
+	 * @return Array de triángulos
+	 */
+	std::vector<Triangle> getTriangles() {
+		std::vector<Triangle> triangles;
+		for (int i = 0; i < numPlanes; i++) {
+			for (int j = 0; j < numTriangles; j++) {
+				triangles.push_back(planes[i].triangles[j]);
+			}
+		}
+		return triangles;
+	}
+
+	/**
+	 * @brief Devuelve el ángulo sólido entre dos triángulos a una distancia dada.
+	 * @param from Triángulo desde el que se mide el ángulo sólido
+	 * @param to Triángulo hasta el que se mide el ángulo sólido
+	 * @param distance Distancia entre los triángulos
+	 * @return Ángulo sólido
+	 */
+	double solidAngle(Triangle from, Triangle to, double distance) {
+		double areaFrom = from.area();
+		double areaTo = to.area();
+		return (areaFrom * areaTo) / (distance * distance);
+	}
+
+	/**
+	 * @brief Cálculo de matrices necesarias para el algoritmo de transferencia de energía.
+	 */
 	void energyTrans() {
-		std::vector<Point> barycenters = getBarycenters();
+		std::vector<Triangle> triangles = getTriangles();
+
+		std::vector<Point> barycenters;
+		for (int i = 0; i < triangles.size(); i++) {
+			barycenters.push_back(triangles[i].getBarycenter());
+		}
+
 		std::vector<std::vector<double>> distances;
 		for (int i = 0; i < barycenters.size(); i++) {
 			std::vector<double> row;
@@ -159,8 +232,30 @@ public:
 			time.push_back(row);
 		}
 
-
 		std::vector<std::vector<double>> energyPr;
+		for (int i = 0; i < barycenters.size(); i++) {
+			std::vector<double> row;
+			double sumAreas = 0;
+
+			for (int j = 0; j < barycenters.size(); j++) {
+				if (distances[i][j] == 0) {
+					row.push_back(0);
+					continue;
+				}
+				row.push_back(solidAngle(triangles[i], triangles[j], 0.2));
+				sumAreas += row[j];
+			}
+
+			for (int j = 0; j < barycenters.size(); j++) {
+				row[j] /= sumAreas;
+			}
+			energyPr.push_back(row);
+		}
+
+		// Se guardan las matrices en archivos CSV
+		CSV("csv/distances.csv", distances);
+		CSV("csv/time.csv", time);
+		CSV("csv/energyPr.csv", energyPr);
 	}
 
 };

@@ -10,12 +10,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-constexpr auto PI = 3.14159265358979323846;
+constexpr auto PI = 3.14159265358979323846; /* pi */
 
-unsigned int sourceVAO;
-unsigned int sourceVBO;
+unsigned int sourceVAO; /* Vertex Array Object */
+unsigned int sourceVBO; /* Vertex Buffer Object */
 
-const Point errorTranslation = { -0.061, 0.066, 0.025 };
+const Point errorTranslation = { -0.061, 0.066, 0.025 }; /* Traslación para corregir el erro en la posición de la fuente */
+
+/* Vertices del icosaedro */
 float icosahedron[] = {
 	0.112, -0.036, 0.068,
 	0.008, -0.036, 0.068,
@@ -98,11 +100,18 @@ float icosahedron[] = {
 	0.008, -0.096, -0.092,
 };
 
+/**
+ * @class Source
+ * @brief Clase que representa una fuente de partículas
+ */
 class Source {
 private:
-	Shader shader;
-	glm::vec4 sourceColor;
+	Shader shader; /* Shader para dibujar la fuente */
+	glm::vec4 sourceColor; /* Color de la fuente */
 
+	/**
+	 * @brief Genera los triángulos que forman la fuente en base a los vértices del icosaedro.
+	 */
 	void genTriangles() {
 		int j = 0;
 		for (int i = 0; i < 20; i++) {
@@ -118,18 +127,29 @@ private:
 		}
 	}
 public:
-	int size;
-	std::string name;
-	int numParticles;
-	float scale;
-	Point position;
-	float energy;
-	float loss;
+	int size;			/* Número de caras de la fuente */
+	std::string name;	/* Nombre de la fuente */
+	int numParticles;	/* Número de partículas */
+	float scale;		/* Escala de la fuente */
+	Point position;		/* Posición de la fuente */
+	float energy;		/* Energía de la fuente y de todas las paráticulas que contiene */
+	float loss;			/* Pérdida de energía de la fuente y de todas las partículas que contiene */
 
-	std::vector<Particle> particles;
-	std::vector<Point> positions;
-	std::vector<Triangle> triangles;
+	std::vector<Particle> particles; /* Partículas que contiene la fuente */
+	std::vector<Point> positions;	 /* Posiciones de las partículas que contiene la fuente */
+	std::vector<Triangle> triangles; /* Triángulos que forman la fuente */
 
+	/**
+	 * @brief Elimina los buffers de la fuente.
+	 */
+	static void deleteSourceBuffers() {
+		glDeleteVertexArrays(1, &sourceVAO);
+		glDeleteBuffers(1, &sourceVBO);
+	}
+
+	/**
+	 * @brief Inicializa los buffers de la fuente.
+	 */
 	static void initSourceBuffers() {
 		glGenVertexArrays(1, &sourceVAO);
 		glGenBuffers(1, &sourceVBO);
@@ -142,14 +162,15 @@ public:
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
 	}
 
-	static void deleteSourceBuffers() {
-		glDeleteVertexArrays(1, &sourceVAO);
-		glDeleteBuffers(1, &sourceVBO);
-	}
-
+	/**
+	 * @brief Constructor de la clase Source.
+	 * @param p Posición de la fuente
+	 * @param n Número de partículas
+	 * @param e Energía de la fuente
+	 * @param l Pérdida de energía de la fuente
+	 * @param s Escala de la fuente
+	 */
 	Source(Point p, int n, float e, float l, float s) {
-		initSourceBuffers();
-
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
@@ -159,6 +180,7 @@ public:
 		loss = l;
 		position = p + (errorTranslation * scale);
 		numParticles = n;
+
 		genTriangles();
 
 		for (int i = 0; i < triangles.size(); i++) {
@@ -172,6 +194,15 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Obtiene todas las direcciones de las partículas que se generan en un triángulo en base a la normal del triángulo.
+	 * Las partículas se generan en forma de abanico con un ángulo de separación de 15 grados. Luego, los vectores subsecuentes se
+	 * obtienen rotando el primer vector en el eje normal del triángulo.
+	 *
+	 * @param t Triángulo
+	 * @param vectPerTriangle Número de partículas que se generan en el triángulo
+	 * @return std::vector<Vect> Direcciones de las partículas
+	 */
 	std::vector<Vect> genParticlesDirection(Triangle t, int vectPerTriangle) {
 		std::vector<Vect> vects;
 
@@ -183,7 +214,7 @@ public:
 		Vect perpendicular = Vect(t.getA(), t.getB()).unit();
 		perpendicular.setStart(t.getBarycenter());
 
-		Vect firstVect = Vect::rotate(perpendicular, normal, angleSep * PI / 180).unit();
+		Vect firstVect = Vect::rodriges(perpendicular, normal, angleSep * PI / 180).unit();
 		firstVect.setStart(t.getBarycenter());
 
 		for (int i = 0; i < vectPerTriangle - 1; i++) {
@@ -194,14 +225,27 @@ public:
 		return vects;
 	}
 
+	/**
+	 * @brief Configura el color de la fuente.
+	 */
 	void setSourceColor(glm::vec4 color) {
 		sourceColor = color;
 	}
 
+	/**
+	 * @brief Configura el nombre de la fuente.
+	 */
 	void setName(std::string n) {
 		name = n;
 	}
 
+	/**
+	 * @brief Renderiza la fuente.
+	 * @param deltaTime Tiempo entre frames
+	 * @param currentFrame Tiempo actual
+	 * @param view Matriz de vista
+	 * @param projection Matriz de proyección
+	 */
 	void transform(float deltaTime, float currentFrame, glm::mat4 view, glm::mat4 projection) {
 		shader.use();
 		shader.setVec4("color", sourceColor);
