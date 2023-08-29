@@ -15,8 +15,8 @@ private:
 	Point a; /* Punto A del triángulo */
 	Point b; /* Punto B del triángulo */
 	Point c; /* Punto C del triángulo */
+	std::string ID; /* Identificador del triángulo */
 public:
-	Vect planeNormal;
 	/**
 	 * @brief Constructor por defecto de la clase
 	 */
@@ -39,6 +39,19 @@ public:
 	}
 
 	/**
+	 * @brief Constructor de la clase
+	 * @param aa
+	 * @param bb
+	 * @param cc
+	 */
+	Triangle(const Point& aa, const Point& bb, const Point& cc, const std::string id) {
+		a = aa;
+		b = bb;
+		c = cc;
+		ID = id;
+	}
+
+	/**
 	 * @brief Constructor de copia
 	 * @param t
 	 */
@@ -46,17 +59,17 @@ public:
 		a = t.getA();
 		b = t.getB();
 		c = t.getC();
+		ID = t.getID();
 	}
 
 	Point getA() const { return a; } /* Devuelve el punto A del triángulo */
 	Point getB() const { return b; } /* Devuelve el punto B del triángulo */
 	Point getC() const { return c; } /* Devuelve el punto C del triángulo */
+	std::string getID() const { return ID; } /* Devuelve el identificador del triángulo */
 
 	void setA(const Point& aa) { a = aa; } /* Configura el punto A del triángulo */
 	void setB(const Point& bb) { b = bb; } /* Configura el punto B del triángulo */
 	void setC(const Point& cc) { c = cc; } /* Configura el punto C del triángulo */
-
-	void setNormal(const Vect& n) { planeNormal = n; } /* Configura el vector normal del triángulo */
 
 	/**
 	 * @brief Sobrecarga del operador de igualdad.

@@ -40,28 +40,22 @@ public:
 	 */
 	void genCube() {
 		Point* floorPoints = new Point[4]{ {-1, -1, 1}, {-1, -1, -1}, {1, -1, 1} ,{1, -1, -1} };
-		Plane floor = Plane(floorPoints, 4, numTriangles);
-		floor.name = "floor";
+		Plane floor = Plane(floorPoints, 4, numTriangles, "floor");
 
 		Point* ceilingPoints = new Point[4]{ {-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1} };
-		Plane ceiling = { ceilingPoints, 4, numTriangles };
-		ceiling.name = "ceiling";
+		Plane ceiling = { ceilingPoints, 4, numTriangles, "ceiling" };
 
 		Point* leftWallPoints = new Point[4]{ {-1, -1, 1}, {-1, 1, 1}, {-1, -1, -1}, {-1, 1, -1} };
-		Plane leftWall = { leftWallPoints, 4, numTriangles };
-		leftWall.name = "leftWall";
+		Plane leftWall = { leftWallPoints, 4, numTriangles, "leftWall" };
 
 		Point* rightWallPoints = new Point[4]{ {1, -1, 1}, {1, -1, -1}, {1, 1, 1}, {1, 1, -1} };
-		Plane rightWall = { rightWallPoints, 4, numTriangles };
-		rightWall.name = "rightWall";
+		Plane rightWall = { rightWallPoints, 4, numTriangles, "rightWall" };
 
 		Point* frontWallPoints = new Point[4]{ {-1, -1, 1},{1, -1, 1},{-1, 1, 1}, {1, 1, 1} };
-		Plane frontWall = { frontWallPoints, 4, numTriangles };
-		frontWall.name = "frontWall";
+		Plane frontWall = { frontWallPoints, 4, numTriangles, "frontWall" };
 
 		Point* backWallPoints = new Point[4]{ {-1, -1, -1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, -1} };
-		Plane backWall = { backWallPoints, 4, numTriangles };
-		backWall.name = "backWall";
+		Plane backWall = { backWallPoints, 4, numTriangles, "backWall" };
 
 		planes[0] = floor;
 		planes[1] = ceiling;
@@ -69,7 +63,6 @@ public:
 		planes[3] = rightWall;
 		planes[4] = frontWall;
 		planes[5] = backWall;
-
 	}
 
 	/**
@@ -185,7 +178,6 @@ public:
 		for (int i = 0; i < numPlanes; i++) {
 			for (int j = 0; j < numTriangles; j++) {
 				triangles.push_back(planes[i].triangles[j]);
-				triangles[i].planeNormal = planes[i].getNormal();
 			}
 		}
 		return triangles;
@@ -265,7 +257,7 @@ public:
 		for (int i = 0; i < barycenters.size(); i++) {
 			std::vector<double> row;
 			for (int j = 0; j < barycenters.size(); j++) {
-				if (triangles[i].planeNormal == triangles[j].planeNormal) {
+				if (triangles[i].getID() == triangles[j].getID()) {
 					row.push_back(0);
 					continue;
 				}
@@ -278,7 +270,7 @@ public:
 		for (int i = 0; i < barycenters.size(); i++) {
 			std::vector<double> row;
 			for (int j = 0; j < barycenters.size(); j++) {
-				if (triangles[i].planeNormal == triangles[j].planeNormal) {
+				if (triangles[i].getID() == triangles[j].getID()) {
 					row.push_back(0);
 					continue;
 				}
@@ -293,7 +285,7 @@ public:
 			double sumAreas = 0;
 
 			for (int j = 0; j < barycenters.size(); j++) {
-				if (triangles[i].planeNormal == triangles[j].planeNormal) {
+				if (triangles[i].getID() == triangles[j].getID()) {
 					row.push_back(0);
 					continue;
 				}

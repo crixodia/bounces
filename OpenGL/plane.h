@@ -31,9 +31,10 @@ public:
 	 * @param n Numero de puntos
 	 * @param nt Numero de triangulos
 	 */
-	Plane(const Point* p, int n, int nt) {
+	Plane(const Point* p, int n, int nt, std::string planeName) {
 		numPoints = n;
 		points = new Point[n];
+		name = planeName;
 		for (int i = 0; i < n; i++) {
 			points[i] = p[i];
 		}
@@ -74,45 +75,39 @@ public:
 					Point p1 = { points[0].x + i * deltaX, points[0].y + j * deltaY, points[0].z };
 					Point p2 = { points[0].x + (i + 1) * deltaX, points[0].y + j * deltaY, points[0].z };
 					Point p3 = { points[0].x + i * deltaX, points[0].y + (j + 1) * deltaY, points[0].z };
-					Triangle T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					Triangle T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 
 					p1 = { points[0].x + (i + 1) * deltaX, points[0].y + j * deltaY, points[0].z };
 					p2 = { points[0].x + (i + 1) * deltaX, points[0].y + (j + 1) * deltaY, points[0].z };
 					p3 = { points[0].x + i * deltaX, points[0].y + (j + 1) * deltaY, points[0].z };
-					T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 				}
 				else if (points[0].y == points[3].y) {
 					Point p1 = { points[0].x + i * deltaX, points[0].y, points[0].z + j * deltaZ };
 					Point p2 = { points[0].x + (i + 1) * deltaX, points[0].y, points[0].z + j * deltaZ };
 					Point p3 = { points[0].x + i * deltaX, points[0].y, points[0].z + (j + 1) * deltaZ };
-					Triangle T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					Triangle T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 
 					p1 = { points[0].x + (i + 1) * deltaX, points[0].y, points[0].z + j * deltaZ };
 					p2 = { points[0].x + (i + 1) * deltaX, points[0].y, points[0].z + (j + 1) * deltaZ };
 					p3 = { points[0].x + i * deltaX, points[0].y, points[0].z + (j + 1) * deltaZ };
-					T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 				}
 				else if (points[0].x == points[3].x) {
 					Point p1 = { points[0].x, points[0].y + i * deltaY, points[0].z + j * deltaZ };
 					Point p2 = { points[0].x, points[0].y + (i + 1) * deltaY, points[0].z + j * deltaZ };
 					Point p3 = { points[0].x, points[0].y + i * deltaY, points[0].z + (j + 1) * deltaZ };
-					Triangle T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					Triangle T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 
 					p1 = { points[0].x, points[0].y + (i + 1) * deltaY, points[0].z + j * deltaZ };
 					p2 = { points[0].x, points[0].y + (i + 1) * deltaY, points[0].z + (j + 1) * deltaZ };
 					p3 = { points[0].x, points[0].y + i * deltaY, points[0].z + (j + 1) * deltaZ };
-					T = Triangle(p1, p2, p3);
-					//T.planeNormal = getNormal();
+					T = Triangle(p1, p2, p3, name);
 					triangles.push_back(T);
 				}
 			}
