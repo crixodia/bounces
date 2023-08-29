@@ -39,22 +39,22 @@ public:
 	 * @brief Genera una habitación en forma de cubo
 	 */
 	void genCube() {
-		Point* floorPoints = new Point[4]{ {-1, -1, 1}, {-1, -1, -1}, {1, -1, 1} ,{1, -1, -1} };
+		Point* floorPoints = new Point[4]{ {-2, -2, 2}, {-2, -2, -2}, {2, -2, 2} ,{2, -2, -2} };
 		Plane floor = Plane(floorPoints, 4, numTriangles, "floor");
 
-		Point* ceilingPoints = new Point[4]{ {-1, 1, 1}, {1, 1, 1}, {-1, 1, -1}, {1, 1, -1} };
+		Point* ceilingPoints = new Point[4]{ {-2, 2, 2}, {2, 2, 2}, {-2, 2, -2}, {2, 2, -2} };
 		Plane ceiling = { ceilingPoints, 4, numTriangles, "ceiling" };
 
-		Point* leftWallPoints = new Point[4]{ {-1, -1, 1}, {-1, 1, 1}, {-1, -1, -1}, {-1, 1, -1} };
+		Point* leftWallPoints = new Point[4]{ {-2, -2, 2}, {-2, 2, 2}, {-2, -2, -2}, {-2, 2, -2} };
 		Plane leftWall = { leftWallPoints, 4, numTriangles, "leftWall" };
 
-		Point* rightWallPoints = new Point[4]{ {1, -1, 1}, {1, -1, -1}, {1, 1, 1}, {1, 1, -1} };
+		Point* rightWallPoints = new Point[4]{ {2, -2, 2}, {2, -2, -2}, {2, 2, 2}, {2, 2, -2} };
 		Plane rightWall = { rightWallPoints, 4, numTriangles, "rightWall" };
 
-		Point* frontWallPoints = new Point[4]{ {-1, -1, 1},{1, -1, 1},{-1, 1, 1}, {1, 1, 1} };
+		Point* frontWallPoints = new Point[4]{ {-2, -2, 2},{2, -2, 2},{-2, 2, 2}, {2, 2, 2} };
 		Plane frontWall = { frontWallPoints, 4, numTriangles, "frontWall" };
 
-		Point* backWallPoints = new Point[4]{ {-1, -1, -1}, {-1, 1, -1}, {1, -1, -1}, {1, 1, -1} };
+		Point* backWallPoints = new Point[4]{ {-2, -2, -2}, {-2, 2, -2}, {2, -2, -2}, {2, 2, -2} };
 		Plane backWall = { backWallPoints, 4, numTriangles, "backWall" };
 
 		planes[0] = floor;
