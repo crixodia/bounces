@@ -5,7 +5,7 @@
 #include "point.h"
 #include "vect.h"
 
-const glm::vec4 DEFAULT_TRIANGLE_COLOR = glm::vec4(0.25, 0.78, 1, 0); /* Color por defecto de los triángulos */
+const glm::vec4 DEFAULT_TRIANGLE_COLOR = glm::vec4(0.25, 0.78, 1, 0.1); /* Color por defecto de los triángulos */
 
 /**
  * @brief Clase que representa un triángulo
@@ -125,6 +125,8 @@ public:
 		a = t.getA();
 		b = t.getB();
 		c = t.getC();
+		ID = t.getID();
+		color = t.getColor();
 		return *this;
 	}
 

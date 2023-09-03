@@ -61,7 +61,9 @@ int main()
 	}
 
 	// Triangle numbers
-	const int n = 1800; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
+	const int n = 128; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
+	// El límite es 242 si se quiere calcular la transferencia de energía
+	// se recomienda usar 128 para un rendimiento óptimo
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -102,7 +104,7 @@ int main()
 	float ENERGY = 1;
 	float LOSS = 0.2f;
 
-	Source source = Source({ -1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
+	Source source = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS);
 	Source source2 = Source({ 1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
 
 	// Receptors
@@ -119,7 +121,7 @@ int main()
 	}
 
 	// Cálculo de porcentaje de energía
-	//room.energyTrans();
+	room.energyTrans();
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))

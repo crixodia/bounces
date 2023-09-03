@@ -37,6 +37,27 @@ public:
 
 		fclose(file);
 	}
+
+	CSV(const char* filename, double** data, size_t numRows, size_t numCols) {
+		FILE* file;
+		if (fopen_s(&file, filename, "w") != 0) {
+			perror("Error al abrir el archivo");
+			return;
+		}
+
+		for (size_t i = 0; i < numRows; ++i) {
+			for (size_t j = 0; j < numCols; ++j) {
+				fprintf(file, "%.6f", data[i][j]);
+				if (j < numCols - 1) {
+					fprintf(file, ",");
+				}
+			}
+			fprintf(file, "\n");
+		}
+
+		fclose(file);
+	}
+
 };
 
 #endif // !CSV_H

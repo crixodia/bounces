@@ -17,7 +17,8 @@ public:
 	Plane* planes;		/* Planos que delimitan la habitación */
 	int numPlanes;		/* Número de planos que delimitan la habitación */
 	int numTriangles;	/* Número de triángulos que forman los planos */
-	std::vector<Point> barycenters; /* Bariocentros de los triángulos que forman los planos */
+	double** energyPr; /* Matriz de porcentajes de energía */
+
 
 	/**
 	 * @brief Constructor de la clase Room
@@ -28,6 +29,7 @@ public:
 		numTriangles = nt;
 		numPlanes = np;
 		planes = new Plane[numPlanes];
+		energyPr = new double* [numTriangles * numPlanes];
 
 		switch (numPlanes) {
 		case 6:
@@ -120,23 +122,33 @@ public:
 	 * @param p Puntero a la partícula
 	 */
 	void handleParticleCollision(Particle& p) {
-		Plane* nearestSurpassed = nearestSurpassedPlane(p.position, p.incidence);
+		int index = nearestSurpassedPlaneIndex(p.position, p.incidence);
 
-		if (nearestSurpassed != nullptr) {
-
+		if (index != -1) {
+			Plane* nearestSurpassed = &planes[index];
 			Triangle* nearestTriangle = nullptr;
 			double dist = 1000000;
-			//int minIndex = 0;
+			int minIndex = 0;
 			for (int i = 0; i < numTriangles; i++) {
 				double d = Vect(nearestSurpassed->triangles[i].getBarycenter(), p.position).length();
 				if (d < dist) {
 					dist = d;
 					nearestTriangle = &nearestSurpassed->triangles[i];
-					//minIndex = i;
+					minIndex = i;
 				}
 			}
 
-			nearestTriangle->setColor(nearestTriangle->getColor() + glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0));
+			//nearestTriangle->setColor(nearestTriangle->getColor() + glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0));
+
+			int k = 0;
+			for (int i = 0; i < numPlanes; i++) {
+				for (int j = 0; j < numTriangles; j++) {
+					glm::vec4 colorTransform = glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0);
+					colorTransform = colorTransform * (float)energyPr[index * numTriangles + minIndex][k];
+					planes[i].triangles[j].setColor(planes[i].triangles[j].getColor() + colorTransform);
+					k++;
+				}
+			}
 
 			//std::cout << minIndex << " " << p.name << ": collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
 			Vect normal = nearestSurpassed->getNormal();
@@ -149,7 +161,7 @@ public:
 	}
 
 	/**
-	 * @brief Devuelve el puntero del plano más cercano a una partícula
+	 * @brief [DEPRECATED] Devuelve el puntero del plano más cercano a una partícula
 	 * @return Puntero al plano más cercano
 	 */
 	Plane* nearestSurpassedPlane(const Point& p, const Vect& incidence) {
@@ -172,21 +184,30 @@ public:
 		return nearest;
 	}
 
-
-
 	/**
-	 * @brief Devuelve los triángulos que constituyen la habitación.
-	 * @return Array de triángulos
+	 * @brief Devuelve el índice del plano más cercano a una partícula
+	 * @return índice al plano más cercano
 	 */
-	std::vector<Triangle> getTriangles() {
-		std::vector<Triangle> triangles;
+	int nearestSurpassedPlaneIndex(const Point& p, const Vect& incidence) {
+		Plane* nearest = &planes[0];
+
+		if (SurpassedPlane(p) == nullptr) {
+			return -1;
+		}
+
+		double minDistance = nearest->distance(p);
+		double distance = nearest->distance(p);
+
+		int index = 0;
 		for (int i = 0; i < numPlanes; i++) {
-			for (int j = 0; j < numTriangles; j++) {
-				triangles.push_back(planes[i].triangles[j]);
-				barycenters.push_back(planes[i].triangles[j].getBarycenter());
+			distance = planes[i].distance(p);
+			if (distance < minDistance) {
+				minDistance = distance;
+				nearest = &planes[i];
+				index = i;
 			}
 		}
-		return triangles;
+		return index;
 	}
 
 	/**
@@ -266,58 +287,66 @@ public:
 	 * @brief Cálculo de matrices necesarias para el algoritmo de transferencia de energía.
 	 */
 	void energyTrans() {
-		std::vector<Triangle> triangles = getTriangles();
+		int dim = numPlanes * numTriangles;
 
-		std::vector<std::vector<double>> distances;
-		for (int i = 0; i < barycenters.size(); i++) {
-			std::vector<double> row;
-			for (int j = 0; j < barycenters.size(); j++) {
-				if (triangles[i].getID() == triangles[j].getID()) {
-					row.push_back(0);
-					continue;
-				}
-				row.push_back(Vect(barycenters[i], barycenters[j]).length());
+		Triangle* triangles = new Triangle[dim];
+
+		int k = 0;
+		for (int i = 0; i < numPlanes; i++) {
+			for (int j = 0; j < numTriangles; j++) {
+				triangles[k] = planes[i].triangles[j];
+				k++;
 			}
-			distances.push_back(row);
 		}
 
-		std::vector<std::vector<double>> time;
-		for (int i = 0; i < barycenters.size(); i++) {
-			std::vector<double> row;
-			for (int j = 0; j < barycenters.size(); j++) {
-				if (triangles[i].getID() == triangles[j].getID()) {
-					row.push_back(0);
-					continue;
-				}
-				row.push_back(distances[i][j] / V_SON);
-			}
-			time.push_back(row);
+		double** distances = new double* [dim];
+		double** time = new double* [dim];
+
+		for (int i = 0; i < dim; i++) {
+			distances[i] = new double[dim];
+			time[i] = new double[dim];
+			energyPr[i] = new double[dim];
 		}
 
-		std::vector<std::vector<double>> energyPr;
-		for (int i = 0; i < barycenters.size(); i++) {
-			std::vector<double> row;
+		for (int i = 0; i < dim; i++) {
 			double sumAreas = 0;
-
-			for (int j = 0; j < barycenters.size(); j++) {
+			for (int j = 0; j < dim; j++) {
 				if (triangles[i].getID() == triangles[j].getID()) {
-					row.push_back(0);
-					continue;
+					distances[i][j] = 0;
+					time[i][j] = 0;
+					energyPr[i][j] = 0;
 				}
-				row.push_back(solidAngle(triangles[i], triangles[j], 0.2));
-				sumAreas += row[j];
+				else {
+					distances[i][j] = Vect(triangles[i].getBarycenter(), triangles[j].getBarycenter()).length();
+					time[i][j] = distances[i][j] / V_SON;
+					energyPr[i][j] = solidAngle(triangles[i], triangles[j], 0.2);
+					sumAreas += energyPr[i][j];
+				}
 			}
 
-			for (int j = 0; j < barycenters.size(); j++) {
-				row[j] /= sumAreas;
+			for (int j = 0; j < dim; j++) {
+				energyPr[i][j] /= sumAreas;
 			}
-			energyPr.push_back(row);
 		}
+
 
 		// Se guardan las matrices en archivos CSV
-		CSV("csv/distances.csv", distances);
-		CSV("csv/time.csv", time);
-		CSV("csv/energyPr.csv", energyPr);
+		std::cout << "Exportando distancias a csv/distances.csv" << std::endl;
+		CSV("csv/distances.csv", distances, dim, dim);
+
+		std::cout << "Exportando tiempos a csv/time.csv" << std::endl;
+		CSV("csv/time.csv", time, dim, dim);
+
+		std::cout << "Exportando angulos solidos a csv/solidAngles.csv" << std::endl;
+		CSV("csv/energyPr.csv", energyPr, dim, dim);
+
+		for (int i = 0; i < dim; i++) {
+			delete[] distances[i];
+			delete[] time[i];
+		}
+		delete[] triangles;
+		delete[] distances;
+		delete[] time;
 	}
 
 };
