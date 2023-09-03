@@ -162,6 +162,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="point.h" />
+    <ClInclude Include="receptor.h" />
     <ClInclude Include="room.h" />
     <ClInclude Include="source.h" />
     <ClInclude Include="triangle.h" />

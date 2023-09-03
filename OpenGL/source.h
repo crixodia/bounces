@@ -170,12 +170,12 @@ public:
 	 * @param l Pérdida de energía de la fuente
 	 * @param s Escala de la fuente
 	 */
-	Source(Point p, int n, float e, float l, float s) {
+	Source(Point p, int n, float e, float l) {
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		sourceColor = glm::vec4(246.0f / 255.0f, 148.0f / 255.0f, 0.0f, 0.0f);
-		scale = s;
+		scale = 1.0f;
 		energy = e;
 		loss = l;
 		position = p + (errorTranslation * scale);

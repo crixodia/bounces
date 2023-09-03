@@ -18,6 +18,7 @@
 #include "vect.h"
 #include "particle.h"
 #include "source.h"
+#include "receptor.h"
 
 // Screen size
 const unsigned int SCR_WIDTH = 1280;
@@ -69,7 +70,7 @@ int main()
 	};
 
 	// Triangle numbers
-	const int n = 2; // 2, 8, 18, 32, 56, 2n*n, 800, 1800
+	const int n = 2; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -104,14 +105,25 @@ int main()
 
 	Particle::initParticleBuffers();
 	Source::initSourceBuffers();
+	Receptor::initReceptorBuffers();
 
-	int MAX_PARTICLES = 400;
-	float ENERGY = 1.0f;
+	int MAX_PARTICLES = 20;
+	float ENERGY = 2.0f;
 	float LOSS = 0.2f;
+	
+	Source source = Source({ -1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
 
-	Source source = Source({ 0.3, 0.3, 0.3 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
-	Source source2 = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
-	Source source3 = Source({ 0.3, -0.3, -0.3 }, MAX_PARTICLES, ENERGY, LOSS, 1.0f);
+	int RECEPTORS = 27; // 3, 9, 27, 81, 243, 729, 2187
+	int receptorsPerSide = pow(RECEPTORS, 1.0f / 3.0f);
+	float receptorDelta = (2 * 1.6) / (receptorsPerSide - static_cast<float>(1));
+	std::vector<Receptor> receptors;
+	for (float i = 0; i < receptorsPerSide; i += 1) {
+		for (float j = 0; j < receptorsPerSide; j += 1) {
+			for (float k = 0; k < receptorsPerSide; k += 1) {
+				receptors.push_back(Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f));
+			}
+		}
+	}
 
 	room.energyTrans();
 
@@ -160,19 +172,18 @@ int main()
 
 		// Source
 		source.transform(deltaTime, currentFrame, view, projection);
-		source2.transform(deltaTime, currentFrame, view, projection);
-		source3.transform(deltaTime, currentFrame, view, projection);
 
 		for (int i = 0; i < MAX_PARTICLES; i++) {
 			// Particles
 			source.particles[i].transform(deltaTime, currentFrame, view, projection);
-			source2.particles[i].transform(deltaTime, currentFrame, view, projection);
-			source3.particles[i].transform(deltaTime, currentFrame, view, projection);
 
 			// Collisions
 			room.handleParticleCollision(source.particles[i]);
-			room.handleParticleCollision(source2.particles[i]);
-			room.handleParticleCollision(source3.particles[i]);
+		}
+
+		// Receptors
+		for (int i = 0; i < receptors.size(); i++) {
+			receptors[i].transform(deltaTime, currentFrame, view, projection);
 		}
 
 		glfwSwapBuffers(window);
@@ -184,6 +195,7 @@ int main()
 
 	Source::deleteSourceBuffers();
 	Particle::deleteParticleBuffers();
+	Receptor::deleteReceptorBuffers();
 
 	glfwTerminate();
 	return 0;

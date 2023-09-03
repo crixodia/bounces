@@ -16,6 +16,7 @@ private:
 	Point b; /* Punto B del triángulo */
 	Point c; /* Punto C del triángulo */
 	std::string ID; /* Identificador del triángulo */
+	glm::vec4 color; /* Color del triángulo */
 public:
 	/**
 	 * @brief Constructor por defecto de la clase
@@ -36,19 +37,39 @@ public:
 		a = aa;
 		b = bb;
 		c = cc;
+		color = glm::vec4(0.0, 0.0, 1.0, 1.0);
 	}
 
 	/**
 	 * @brief Constructor de la clase
-	 * @param aa
-	 * @param bb
-	 * @param cc
+	 * @param aa Punto A del triángulo
+	 * @param bb Punto B del triángulo
+	 * @param cc Punto C del triángulo
+	 * @param id Identificador del triángulo
+	 * @param col Color del triángulo
 	 */
 	Triangle(const Point& aa, const Point& bb, const Point& cc, const std::string id) {
 		a = aa;
 		b = bb;
 		c = cc;
 		ID = id;
+		color = glm::vec4(0.0, 0.0, 1.0, 1.0);
+	}
+
+	/**
+	 * @brief Constructor de la clase
+	 * @param aa Punto A del triángulo
+	 * @param bb Punto B del triángulo
+	 * @param cc Punto C del triángulo
+	 * @param id Identificador del triángulo
+	 * @param col Color del triángulo
+	 */
+	Triangle(const Point& aa, const Point& bb, const Point& cc, const std::string id, const glm::vec4 col) {
+		a = aa;
+		b = bb;
+		c = cc;
+		ID = id;
+		color = col;
 	}
 
 	/**
@@ -60,16 +81,19 @@ public:
 		b = t.getB();
 		c = t.getC();
 		ID = t.getID();
+		color = t.getColor();
 	}
 
 	Point getA() const { return a; } /* Devuelve el punto A del triángulo */
 	Point getB() const { return b; } /* Devuelve el punto B del triángulo */
 	Point getC() const { return c; } /* Devuelve el punto C del triángulo */
 	std::string getID() const { return ID; } /* Devuelve el identificador del triángulo */
+	glm::vec4 getColor() const { return color; } /* Devuelve el color del triángulo */
 
 	void setA(const Point& aa) { a = aa; } /* Configura el punto A del triángulo */
 	void setB(const Point& bb) { b = bb; } /* Configura el punto B del triángulo */
 	void setC(const Point& cc) { c = cc; } /* Configura el punto C del triángulo */
+	void setID(const std::string id) { ID = id; } /* Configura el identificador del triángulo */
 
 	/**
 	 * @brief Sobrecarga del operador de igualdad.

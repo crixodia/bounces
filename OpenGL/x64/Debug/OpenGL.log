@@ -187,19 +187,9 @@ D:\Repositories\bounces\OpenGL\source.h(118,13): warning C4244: 'initializing': 
 D:\Repositories\bounces\OpenGL\source.h(119,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 D:\Repositories\bounces\OpenGL\source.h(120,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 D:\Repositories\bounces\OpenGL\source.h(187,82): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
-glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
+D:\Repositories\bounces\OpenGL\receptor.h(32,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\receptor.h(33,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\receptor.h(34,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\main.cpp(117,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:\Repositories\bounces\OpenGL\main.cpp(118,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   OpenGL.vcxproj -> D:\Repositories\bounces\x64\Debug\OpenGL.exe
