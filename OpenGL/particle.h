@@ -153,7 +153,7 @@ public:
 		shader.setVec4("color", particleColor);
 
 		glm::mat4 particleTransform = glm::mat4(1.0f);
-		position = position + incidence.asPoint() * deltaTime * energy;
+		position = position + incidence.asPoint() * deltaTime * energy * 2;
 
 		particleTransform = glm::translate(particleTransform, glm::vec3(position.x, position.y, position.z));
 		particleTransform = glm::scale(particleTransform, glm::vec3(0.02f) * (allowScale ? energy / 5.0f : 1));

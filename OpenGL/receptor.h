@@ -11,6 +11,8 @@
 #include "point.h"
 #include "triangle.h"
 
+const glm::vec4 DEFAULT_RECEPTOR_COLOR = glm::vec4(0.32, 0.8, 0.37, 1); /* Color por defecto del receptor */
+
 unsigned int receptorVAO; /* Vertex Array Object */
 unsigned int receptorVBO; /* Vertex Buffer Object */
 
@@ -80,7 +82,7 @@ public:
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
-		receptorColor = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+		receptorColor = DEFAULT_RECEPTOR_COLOR;
 		scale = s;
 		position = p + (errorTranslation * scale);
 
@@ -124,7 +126,7 @@ public:
 		glBindVertexArray(receptorVAO);
 		glDrawArrays(GL_TRIANGLES, 0, size);
 
-		shader.setVec4("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		shader.setVec4("color", receptorColor - glm::vec4(0.3));
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, size);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 constexpr auto PI = 3.14159265358979323846; /* pi */
+const glm::vec4 DEFAULT_SOURCE_COLOR = glm::vec4(1, 0.82, 0.31, 1); /* Color por defecto de la fuente */
 
 unsigned int sourceVAO; /* Vertex Array Object */
 unsigned int sourceVBO; /* Vertex Buffer Object */
@@ -174,7 +175,7 @@ public:
 		size = 20 * 3;
 		name = "Source";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
-		sourceColor = glm::vec4(246.0f / 255.0f, 148.0f / 255.0f, 0.0f, 0.0f);
+		sourceColor = DEFAULT_SOURCE_COLOR;
 		scale = 1.0f;
 		energy = e;
 		loss = l;
@@ -186,9 +187,8 @@ public:
 		for (int i = 0; i < triangles.size(); i++) {
 			std::vector<Vect> tempDirs = genParticlesDirection(triangles[i], numParticles / triangles.size());
 			for (int j = 0; j < tempDirs.size(); j++) {
-				// rand between 0.0 and 0.3, Just for testing - Remove when it is done
-				// float randX = (float)rand() / RAND_MAX * 0.3f;
 				Particle temp = Particle(energy, loss, triangles[i].getBarycenter(), tempDirs[j]);
+				temp.setName("Particle " + std::to_string(i) + " " + std::to_string(j));
 				particles.push_back(temp);
 			}
 		}
@@ -262,7 +262,7 @@ public:
 		glBindVertexArray(sourceVAO);
 		glDrawArrays(GL_TRIANGLES, 0, size);
 
-		shader.setVec4("color", glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		shader.setVec4("color", sourceColor - glm::vec4(0.3));
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_TRIANGLES, 0, size);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

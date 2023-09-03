@@ -17,6 +17,7 @@ public:
 	Plane* planes;		/* Planos que delimitan la habitación */
 	int numPlanes;		/* Número de planos que delimitan la habitación */
 	int numTriangles;	/* Número de triángulos que forman los planos */
+	std::vector<Point> barycenters; /* Bariocentros de los triángulos que forman los planos */
 
 	/**
 	 * @brief Constructor de la clase Room
@@ -120,8 +121,24 @@ public:
 	 */
 	void handleParticleCollision(Particle& p) {
 		Plane* nearestSurpassed = nearestSurpassedPlane(p.position, p.incidence);
+
 		if (nearestSurpassed != nullptr) {
-			//std::cout << p.name << ": collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
+
+			Triangle* nearestTriangle = nullptr;
+			double dist = 1000000;
+			//int minIndex = 0;
+			for (int i = 0; i < numTriangles; i++) {
+				double d = Vect(nearestSurpassed->triangles[i].getBarycenter(), p.position).length();
+				if (d < dist) {
+					dist = d;
+					nearestTriangle = &nearestSurpassed->triangles[i];
+					//minIndex = i;
+				}
+			}
+
+			nearestTriangle->setColor(nearestTriangle->getColor() + glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0));
+
+			//std::cout << minIndex << " " << p.name << ": collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
 			Vect normal = nearestSurpassed->getNormal();
 			Vect reflex = nearestSurpassed->reflect(p.incidence);
 			Point pi = nearestSurpassed->incidence(p.position, p.incidence);
@@ -155,19 +172,7 @@ public:
 		return nearest;
 	}
 
-	/**
-	 * @brief Devuelve los baricentros de los triángulos que constituyen la habitación.
-	 * @return Array de puntos
-	 */
-	std::vector<Point> getBarycenters() {
-		std::vector<Point> barycenters;
-		for (int i = 0; i < numPlanes; i++) {
-			for (int j = 0; j < numTriangles; j++) {
-				barycenters.push_back(planes[i].triangles[j].getBarycenter());
-			}
-		}
-		return barycenters;
-	}
+
 
 	/**
 	 * @brief Devuelve los triángulos que constituyen la habitación.
@@ -178,9 +183,24 @@ public:
 		for (int i = 0; i < numPlanes; i++) {
 			for (int j = 0; j < numTriangles; j++) {
 				triangles.push_back(planes[i].triangles[j]);
+				barycenters.push_back(planes[i].triangles[j].getBarycenter());
 			}
 		}
 		return triangles;
+	}
+
+	/**
+	 * @brief Devuelve los colores de los triángulos que constituyen la habitación.
+	 * @return Array de colores
+	 */
+	std::vector<glm::vec4> getTriangleColors() {
+		std::vector<glm::vec4> colors;
+		for (int i = 0; i < numPlanes; i++) {
+			for (int j = 0; j < numTriangles; j++) {
+				colors.push_back(planes[i].triangles[j].getColor());
+			}
+		}
+		return colors;
 	}
 
 	/**
@@ -247,11 +267,6 @@ public:
 	 */
 	void energyTrans() {
 		std::vector<Triangle> triangles = getTriangles();
-
-		std::vector<Point> barycenters;
-		for (int i = 0; i < triangles.size(); i++) {
-			barycenters.push_back(triangles[i].getBarycenter());
-		}
 
 		std::vector<std::vector<double>> distances;
 		for (int i = 0; i < barycenters.size(); i++) {

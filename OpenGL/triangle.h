@@ -5,6 +5,8 @@
 #include "point.h"
 #include "vect.h"
 
+const glm::vec4 DEFAULT_TRIANGLE_COLOR = glm::vec4(0.25, 0.78, 1, 0); /* Color por defecto de los triángulos */
+
 /**
  * @brief Clase que representa un triángulo
  * @details Un triángulo se representa mediante tres puntos en el espacio
@@ -37,7 +39,7 @@ public:
 		a = aa;
 		b = bb;
 		c = cc;
-		color = glm::vec4(0.0, 0.0, 1.0, 1.0);
+		color = DEFAULT_TRIANGLE_COLOR;
 	}
 
 	/**
@@ -53,7 +55,7 @@ public:
 		b = bb;
 		c = cc;
 		ID = id;
-		color = glm::vec4(0.0, 0.0, 1.0, 1.0);
+		color = DEFAULT_TRIANGLE_COLOR;
 	}
 
 	/**
@@ -94,6 +96,7 @@ public:
 	void setB(const Point& bb) { b = bb; } /* Configura el punto B del triángulo */
 	void setC(const Point& cc) { c = cc; } /* Configura el punto C del triángulo */
 	void setID(const std::string id) { ID = id; } /* Configura el identificador del triángulo */
+	void setColor(const glm::vec4 col) { color = col; } /* Configura el color del triángulo */
 
 	/**
 	 * @brief Sobrecarga del operador de igualdad.
@@ -169,6 +172,15 @@ public:
 		Vect v2(a, c);
 		Vect n = v1 ^ v2;
 		return n.length() / 2.0;
+	}
+
+	bool isPointInside(const Point& p) const {
+		Vect v1(a, b);
+		Vect v2(a, c);
+		Vect v3(a, p);
+		Vect n = v1 ^ v2;
+		double d = n * v3;
+		return d > 0 ? true : false;
 	}
 
 	/**

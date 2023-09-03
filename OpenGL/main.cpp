@@ -60,17 +60,8 @@ int main()
 		return -1;
 	}
 
-	double colors[] = {
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-		239.0f / 255.0f, 246.0f / 255.0f, 252.0f / 255.0f, 0.8,
-	};
-
 	// Triangle numbers
-	const int n = 2; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
+	const int n = 1800; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
 	const int faces = 6;
 
 	Room room = Room(n, faces);
@@ -107,12 +98,14 @@ int main()
 	Source::initSourceBuffers();
 	Receptor::initReceptorBuffers();
 
-	int MAX_PARTICLES = 20;
-	float ENERGY = 2.0f;
+	int MAX_PARTICLES = 200;
+	float ENERGY = 1;
 	float LOSS = 0.2f;
-	
-	Source source = Source({ -1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
 
+	Source source = Source({ -1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
+	Source source2 = Source({ 1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
+
+	// Receptors
 	int RECEPTORS = 27; // 3, 9, 27, 81, 243, 729, 2187
 	int receptorsPerSide = pow(RECEPTORS, 1.0f / 3.0f);
 	float receptorDelta = (2 * 1.6) / (receptorsPerSide - static_cast<float>(1));
@@ -125,7 +118,8 @@ int main()
 		}
 	}
 
-	room.energyTrans();
+	// Cálculo de porcentaje de energía
+	//room.energyTrans();
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -147,20 +141,9 @@ int main()
 		roomShader.setMat4("view", view);
 		roomShader.setMat4("projection", projection);
 
-		int j = 0;
+		std::vector<glm::vec4> roomColors = room.getTriangleColors();
 		for (int i = 0; i < tnt; i++) {
-			roomShader.setVec4(
-				"triangle_color",
-				glm::vec4(
-					colors[j],
-					colors[j + 1],
-					colors[j + 2],
-					colors[j + 3]
-				)
-			);
-			if (i % n == 0) {
-				j += 3;
-			}
+			roomShader.setVec4("triangle_color", roomColors[i]);
 			glBindVertexArray(VAO[i]);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
@@ -172,13 +155,16 @@ int main()
 
 		// Source
 		source.transform(deltaTime, currentFrame, view, projection);
+		source2.transform(deltaTime, currentFrame, view, projection);
 
 		for (int i = 0; i < MAX_PARTICLES; i++) {
 			// Particles
 			source.particles[i].transform(deltaTime, currentFrame, view, projection);
+			source2.particles[i].transform(deltaTime, currentFrame, view, projection);
 
 			// Collisions
 			room.handleParticleCollision(source.particles[i]);
+			room.handleParticleCollision(source2.particles[i]);
 		}
 
 		// Receptors
