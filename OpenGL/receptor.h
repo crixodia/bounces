@@ -8,8 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "point.h"
-#include "triangle.h"
+#include "source.h"
 
 const glm::vec4 DEFAULT_RECEPTOR_COLOR = glm::vec4(0.32, 0.8, 0.37, 1); /* Color por defecto del receptor */
 
@@ -47,6 +46,7 @@ public:
 	std::string name;	/* Nombre del receptor */
 	float scale;		/* Escala del receptor */
 	Point position;		/* Posición del receptor */
+	double radio;		/* Radio del receptor */
 
 	std::vector<Triangle> triangles; /* Triángulos que forman el receptor */
 
@@ -73,6 +73,8 @@ public:
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
 	}
 
+	Receptor() {}
+
 	/**
 	 * @brief Constructor de la clase Receptor.
 	 * @param p Posición del receptor
@@ -85,8 +87,35 @@ public:
 		receptorColor = DEFAULT_RECEPTOR_COLOR;
 		scale = s;
 		position = p + (errorTranslation * scale);
-
+		radio = computeRadio();
 		genTriangles();
+	}
+
+	Receptor& operator=(const Receptor& r) {
+		size = r.size;
+		name = r.name;
+		shader = r.shader;
+		receptorColor = r.receptorColor;
+		scale = r.scale;
+		position = r.position;
+		radio = r.radio;
+		triangles = r.triangles;
+		return *this;
+	}
+
+	Receptor(const Receptor& r) {
+		size = r.size;
+		name = r.name;
+		shader = r.shader;
+		receptorColor = r.receptorColor;
+		scale = r.scale;
+		position = r.position;
+		radio = r.radio;
+		triangles = r.triangles;
+	}
+
+	double computeRadio() {
+		return 0.21 * sqrt(3) * (3 + sqrt(5)) * scale / 12;
 	}
 
 	/**
@@ -134,6 +163,12 @@ public:
 		glBindVertexArray(0);
 
 	}
+
+	friend std::ostream& operator<<(std::ostream& os, const Receptor& r) {
+		os << r.position << " " << r.scale << " " << r.name;
+		return os;
+	}
+
 };
 
 #endif // !RECEPTOR_H

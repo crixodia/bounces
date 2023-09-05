@@ -60,13 +60,28 @@ int main()
 		return -1;
 	}
 
+	// Receptors
+	int RECEPTORS = 27; // 3, 9, 27, 81, 243, 729, 2187
+	int receptorsPerSide = pow(RECEPTORS, 1.0f / 3.0f);
+	float receptorDelta = (2 * 1.6) / (receptorsPerSide - static_cast<float>(1));
+	Receptor* receptors = new Receptor[RECEPTORS];
+	int l = 0;
+	for (float i = 0; i < receptorsPerSide; i += 1) {
+		for (float j = 0; j < receptorsPerSide; j += 1) {
+			for (float k = 0; k < receptorsPerSide; k += 1) {
+				receptors[l] = Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f);
+				l++;
+			}
+		}
+	}
+
 	// Triangle numbers
-	const int n = 128; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
+	const int n = 242; // 2, 8, 18, 32, 50, 2n*n, 800, 1800
 	// El límite es 242 si se quiere calcular la transferencia de energía
 	// se recomienda usar 128 para un rendimiento óptimo
 	const int faces = 6;
 
-	Room room = Room(n, faces);
+	Room room = Room(n, faces, RECEPTORS, receptors);
 
 	const int tnt = n * faces;
 	double** toDraw = room.getAllVertices();
@@ -100,28 +115,12 @@ int main()
 	Source::initSourceBuffers();
 	Receptor::initReceptorBuffers();
 
-	int MAX_PARTICLES = 200;
-	float ENERGY = 1;
+	int MAX_PARTICLES = 200; // Se recomienda usar 400 para un rendimiento óptimo
+	float ENERGY = 200;
 	float LOSS = 0.2f;
 
-	Source source = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS);
+	//Source source = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS);
 	Source source2 = Source({ 1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
-
-	// Receptors
-	int RECEPTORS = 27; // 3, 9, 27, 81, 243, 729, 2187
-	int receptorsPerSide = pow(RECEPTORS, 1.0f / 3.0f);
-	float receptorDelta = (2 * 1.6) / (receptorsPerSide - static_cast<float>(1));
-	std::vector<Receptor> receptors;
-	for (float i = 0; i < receptorsPerSide; i += 1) {
-		for (float j = 0; j < receptorsPerSide; j += 1) {
-			for (float k = 0; k < receptorsPerSide; k += 1) {
-				receptors.push_back(Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f));
-			}
-		}
-	}
-
-	// Cálculo de porcentaje de energía
-	room.energyTrans();
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -156,21 +155,21 @@ int main()
 		}
 
 		// Source
-		source.transform(deltaTime, currentFrame, view, projection);
+		//source.transform(deltaTime, currentFrame, view, projection);
 		source2.transform(deltaTime, currentFrame, view, projection);
 
 		for (int i = 0; i < MAX_PARTICLES; i++) {
 			// Particles
-			source.particles[i].transform(deltaTime, currentFrame, view, projection);
+			//source.particles[i].transform(deltaTime, currentFrame, view, projection);
 			source2.particles[i].transform(deltaTime, currentFrame, view, projection);
 
 			// Collisions
-			room.handleParticleCollision(source.particles[i]);
+			//room.handleParticleCollision(source.particles[i]);
 			room.handleParticleCollision(source2.particles[i]);
 		}
 
 		// Receptors
-		for (int i = 0; i < receptors.size(); i++) {
+		for (int i = 0; i < RECEPTORS; i++) {
 			receptors[i].transform(deltaTime, currentFrame, view, projection);
 		}
 

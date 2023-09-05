@@ -177,7 +177,7 @@ public:
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		sourceColor = DEFAULT_SOURCE_COLOR;
 		scale = 1.0f;
-		energy = e;
+		energy = e/n;
 		loss = l;
 		position = p + (errorTranslation * scale);
 		numParticles = n;
@@ -272,4 +272,4 @@ public:
 	}
 };
 
-#endif // SOURCE_H
+#endif // !SOURCE_H

@@ -147,13 +147,10 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cube.fs" />
     <None Include="shaders\cube.vs" />
-    <None Include="shaders\skybox.fs" />
-    <None Include="shaders\skybox.vs" />
     <None Include="shaders\room.fs" />
     <None Include="shaders\room.vs" />
   </ItemGroup>

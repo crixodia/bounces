@@ -184,6 +184,13 @@ public:
 		return sqrt(pow(getI(), 2) + pow(getJ(), 2) + pow(getK(), 2));
 	}
 
+	Vect perpendicular() const {
+		Point start = p1;
+		Vect r = Vect(Point(-getJ(), getI(), 0));
+		r.setStart(start);
+		return r;
+	}
+
 	/**
 	 * @brief Devuelve el vector unitario.
 	 * @return Devuelve el vector unitario.
@@ -247,7 +254,7 @@ public:
 		return r1 + r2 + r3;
 	}
 
-	
+
 	/**
 	 * @brief [Deprecated] Rota un vector alrededor de un eje dado un ángulo theta.
 	 * @param u Vector eje.

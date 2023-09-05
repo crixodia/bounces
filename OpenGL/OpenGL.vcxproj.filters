@@ -27,21 +27,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\cube.fs">
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shaders\cube.vs">
-      <Filter>Source Files\shaders</Filter>
-    </None>
-    <None Include="shaders\skybox.fs">
-      <Filter>Source Files\shaders</Filter>
-    </None>
-    <None Include="shaders\skybox.vs">
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shaders\room.fs">

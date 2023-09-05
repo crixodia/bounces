@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <learnopengl/camera.h>
 #include "particle.h"
+#include "receptor.h"
 
 // Camera
 Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));

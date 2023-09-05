@@ -5,8 +5,10 @@
 #include "plane.h"
 #include "particle.h"
 #include "csv.h"
+#include "receptor.h"
 
 constexpr auto V_SON = 340.0f; /* Constante de la velocidad del sonido en el aire */
+
 
 /*
  * @brief Clase que representa una habitación
@@ -17,7 +19,10 @@ public:
 	Plane* planes;		/* Planos que delimitan la habitación */
 	int numPlanes;		/* Número de planos que delimitan la habitación */
 	int numTriangles;	/* Número de triángulos que forman los planos */
-	double** energyPr; /* Matriz de porcentajes de energía */
+	int numReceptors;	/* Número de receptores de la habitación */
+	Receptor* receptors; /* Receptores de la habitación */
+	double** energyRoom; /* Matriz de porcentajes de energía */
+	double** energyReceptors; /* Matriz de energía en los receptores */
 
 
 	/**
@@ -25,17 +30,24 @@ public:
 	 * @param nt Número de triángulos que forman los planos
 	 * @param np Número de planos que delimitan la habitación
 	 */
-	Room(int nt, int np) {
+	Room(int nt, int np, int nr, Receptor* rs) {
 		numTriangles = nt;
 		numPlanes = np;
+		numReceptors = nr;
+
 		planes = new Plane[numPlanes];
-		energyPr = new double* [numTriangles * numPlanes];
+		receptors = rs;
+
+		energyRoom = new double* [numTriangles * numPlanes];
+		energyReceptors = new double* [numReceptors];
 
 		switch (numPlanes) {
 		case 6:
 			genCube();
 			break;
 		}
+
+		energyTrans();
 	}
 
 	/**
@@ -144,7 +156,7 @@ public:
 			for (int i = 0; i < numPlanes; i++) {
 				for (int j = 0; j < numTriangles; j++) {
 					glm::vec4 colorTransform = glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0);
-					colorTransform = colorTransform * (float)energyPr[index * numTriangles + minIndex][k];
+					colorTransform = colorTransform * (float)energyRoom[index * numTriangles + minIndex][k];
 					planes[i].triangles[j].setColor(planes[i].triangles[j].getColor() + colorTransform);
 					k++;
 				}
@@ -262,6 +274,31 @@ public:
 		return Triangle(A, B, C).area();
 	}
 
+
+
+	double soildAngle(Triangle from, Receptor to, double distance) {
+		Point baricenterFrom = from.getBarycenter();
+
+		Vect receptorNormal = -from.getNormal();
+		receptorNormal.setStart(to.position);
+
+		Vect perpendicular = receptorNormal.perpendicular() * to.radio;
+		perpendicular.setStart(to.position);
+
+		Point planePoint = perpendicular.p2;
+		Vect lineDir = Vect(baricenterFrom, planePoint).unit();
+
+		Vect temp = from.getNormal() * distance;
+		temp.setStart(baricenterFrom);
+		Point newCenter = temp.p2;
+
+		Point A = intersection(newCenter, receptorNormal, planePoint, lineDir);
+		double radio = Vect(newCenter, A).length();
+
+		return 2 * PI * pow(radio, 2);
+	}
+
+
 	/**
 	 * @brief Devuelve el punto de intersección entre un plano y una recta.
 	 * @param plane Punto del plano
@@ -305,30 +342,46 @@ public:
 		for (int i = 0; i < dim; i++) {
 			distances[i] = new double[dim];
 			time[i] = new double[dim];
-			energyPr[i] = new double[dim];
+			energyRoom[i] = new double[dim];
 		}
 
+		for (int i = 0; i < numReceptors; i++) {
+			energyReceptors[i] = new double[dim];
+		}
+
+		// Porcentaje de energía de la habitación
 		for (int i = 0; i < dim; i++) {
 			double sumAreas = 0;
 			for (int j = 0; j < dim; j++) {
 				if (triangles[i].getID() == triangles[j].getID()) {
 					distances[i][j] = 0;
 					time[i][j] = 0;
-					energyPr[i][j] = 0;
+					energyRoom[i][j] = 0;
 				}
 				else {
 					distances[i][j] = Vect(triangles[i].getBarycenter(), triangles[j].getBarycenter()).length();
 					time[i][j] = distances[i][j] / V_SON;
-					energyPr[i][j] = solidAngle(triangles[i], triangles[j], 0.2);
-					sumAreas += energyPr[i][j];
+					energyRoom[i][j] = solidAngle(triangles[i], triangles[j], 0.2);
+					sumAreas += energyRoom[i][j];
 				}
 			}
 
 			for (int j = 0; j < dim; j++) {
-				energyPr[i][j] /= sumAreas;
+				energyRoom[i][j] /= sumAreas;
 			}
 		}
 
+		// Porcentaje de energía de los receptores
+		for (int i = 0; i < numReceptors; i++) {
+			double sumAreas = 0;
+			for (int j = 0; j < dim; j++) {
+				energyReceptors[i][j] = soildAngle(triangles[j], receptors[i], 0.2);
+				sumAreas += energyReceptors[i][j];
+			}
+			for (int j = 0; j < dim; j++) {
+				energyReceptors[i][j] /= sumAreas;
+			}
+		}
 
 		// Se guardan las matrices en archivos CSV
 		std::cout << "Exportando distancias a csv/distances.csv" << std::endl;
@@ -337,8 +390,11 @@ public:
 		std::cout << "Exportando tiempos a csv/time.csv" << std::endl;
 		CSV("csv/time.csv", time, dim, dim);
 
-		std::cout << "Exportando angulos solidos a csv/solidAngles.csv" << std::endl;
-		CSV("csv/energyPr.csv", energyPr, dim, dim);
+		std::cout << "Exportando porcentajes de energia csv/energyRoom.csv" << std::endl;
+		CSV("csv/energyRoom.csv", energyRoom, dim, dim);
+
+		std::cout << "Exportando porcentaje de energias de receptores csv/energyReceptors.csv" << std::endl;
+		CSV("csv/energyReceptors.csv", energyReceptors, numReceptors, dim);
 
 		for (int i = 0; i < dim; i++) {
 			delete[] distances[i];
