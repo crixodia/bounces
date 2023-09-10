@@ -3,12 +3,10 @@
 
 #include <ostream>
 
-#include <learnopengl/shader.h>
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+#include "point.h"
+#include "triangle.h"
 #include "source.h"
+#include "particle.h"
 
 const glm::vec4 DEFAULT_RECEPTOR_COLOR = glm::vec4(0.32, 0.8, 0.37, 1); /* Color por defecto del receptor */
 
@@ -43,10 +41,12 @@ private:
 	}
 public:
 	int size;			/* Número de caras del receptor */
-	std::string name;	/* Nombre del receptor */
+	int ID;	/* Nombre del receptor */
 	float scale;		/* Escala del receptor */
 	Point position;		/* Posición del receptor */
 	double radio;		/* Radio del receptor */
+	double energy; /* Energía del receptor */
+	double* energyRoom;
 
 	std::vector<Triangle> triangles; /* Triángulos que forman el receptor */
 
@@ -82,7 +82,7 @@ public:
 	 */
 	Receptor(Point p, float s) {
 		size = 20 * 3;
-		name = "Source";
+		ID = -1;
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		receptorColor = DEFAULT_RECEPTOR_COLOR;
 		scale = s;
@@ -93,25 +93,37 @@ public:
 
 	Receptor& operator=(const Receptor& r) {
 		size = r.size;
-		name = r.name;
+		ID = r.ID;
 		shader = r.shader;
 		receptorColor = r.receptorColor;
 		scale = r.scale;
 		position = r.position;
 		radio = r.radio;
 		triangles = r.triangles;
+		energy = r.energy;
+		energyRoom = r.energyRoom;
 		return *this;
+	}
+
+	bool operator==(const Receptor& r) {
+		return r.ID == ID;
+	}
+
+	bool operator!=(const Receptor& r) {
+		return r.ID != ID;
 	}
 
 	Receptor(const Receptor& r) {
 		size = r.size;
-		name = r.name;
+		ID = r.ID;
 		shader = r.shader;
 		receptorColor = r.receptorColor;
 		scale = r.scale;
 		position = r.position;
 		radio = r.radio;
 		triangles = r.triangles;
+		energy = r.energy;
+		energyRoom = r.energyRoom;
 	}
 
 	double computeRadio() {
@@ -125,11 +137,16 @@ public:
 		receptorColor = color;
 	}
 
+
+	void setEnergyRoom(double* energyRoom) {
+		this->energyRoom = energyRoom;
+	}
+
 	/**
 	 * @brief Configura el nombre del receptor
 	 */
-	void setName(std::string n) {
-		name = n;
+	void setID(int n) {
+		ID = n;
 	}
 
 	/**
@@ -164,11 +181,25 @@ public:
 
 	}
 
+	void handleParticleCollision(Particle& p) {
+		Vect dist = Vect(p.position, position);
+		if (p.lastTriangle == -1) {
+			return;
+		}
+
+		if (dist.length() < radio && p.lastReceptor == -1) {
+			energy += p.energy * energyRoom[p.lastTriangle];
+			// std::cout << ID << " " << p.lastTriangle << " " << energyRoom[p.lastTriangle] << std::endl;
+			p.setLastReceptor(ID);
+			receptorColor = receptorColor + p.energy * glm::vec4(0.1, 0.1, 0.1, 0);
+		}
+	}
+
 	friend std::ostream& operator<<(std::ostream& os, const Receptor& r) {
-		os << r.position << " " << r.scale << " " << r.name;
+		os << r.position << " " << r.scale << " " << r.ID;
 		return os;
 	}
 
 };
 
-#endif // !RECEPTOR_H
+#endif // RECEPTOR_H

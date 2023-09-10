@@ -2,9 +2,10 @@
 #define PLANE_H
 
 #include <ostream>
-#include "triangle.h"
-#include "vect.h"
 #include <vector>
+
+#include "point.h"
+#include "triangle.h"
 
 /**
  * @brief Clase plano que contiene un arreglo de puntos y un arreglo de triangulos
@@ -177,4 +178,4 @@ public:
 	}
 };
 
-#endif // !PLANE_H
+#endif // PLANE_H

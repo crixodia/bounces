@@ -2,6 +2,7 @@
 #define TRIANGLE_H
 
 #include <ostream>
+
 #include "point.h"
 #include "vect.h"
 
@@ -18,6 +19,7 @@ private:
 	Point b; /* Punto B del triángulo */
 	Point c; /* Punto C del triángulo */
 	std::string ID; /* Identificador del triángulo */
+	int index; /* Índice del triángulo */
 	glm::vec4 color; /* Color del triángulo */
 public:
 	/**
@@ -40,6 +42,7 @@ public:
 		b = bb;
 		c = cc;
 		color = DEFAULT_TRIANGLE_COLOR;
+		index = -1;
 	}
 
 	/**
@@ -56,6 +59,7 @@ public:
 		c = cc;
 		ID = id;
 		color = DEFAULT_TRIANGLE_COLOR;
+		index = -1;
 	}
 
 	/**
@@ -72,6 +76,7 @@ public:
 		c = cc;
 		ID = id;
 		color = col;
+		index = -1;
 	}
 
 	/**
@@ -84,6 +89,7 @@ public:
 		c = t.getC();
 		ID = t.getID();
 		color = t.getColor();
+		index = t.getIndex();
 	}
 
 	Point getA() const { return a; } /* Devuelve el punto A del triángulo */
@@ -91,12 +97,14 @@ public:
 	Point getC() const { return c; } /* Devuelve el punto C del triángulo */
 	std::string getID() const { return ID; } /* Devuelve el identificador del triángulo */
 	glm::vec4 getColor() const { return color; } /* Devuelve el color del triángulo */
+	int getIndex() const { return index; } /* Devuelve el índice del triángulo */
 
 	void setA(const Point& aa) { a = aa; } /* Configura el punto A del triángulo */
 	void setB(const Point& bb) { b = bb; } /* Configura el punto B del triángulo */
 	void setC(const Point& cc) { c = cc; } /* Configura el punto C del triángulo */
 	void setID(const std::string id) { ID = id; } /* Configura el identificador del triángulo */
 	void setColor(const glm::vec4 col) { color = col; } /* Configura el color del triángulo */
+	void setIndex(const int i) { index = i; } /* Configura el índice del triángulo */
 
 	/**
 	 * @brief Sobrecarga del operador de igualdad.
@@ -127,6 +135,7 @@ public:
 		c = t.getC();
 		ID = t.getID();
 		color = t.getColor();
+		index = t.getIndex();
 		return *this;
 	}
 
@@ -206,4 +215,4 @@ public:
 	}
 };
 
-#endif // !TRIANGLE_H
+#endif // TRIANGLE_H

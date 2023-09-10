@@ -2,13 +2,13 @@
 #define ROOM_H
 
 #include <ostream>
+
 #include "plane.h"
-#include "particle.h"
-#include "csv.h"
 #include "receptor.h"
+#include "csv.h"
+#include "particle.h"
 
 constexpr auto V_SON = 340.0f; /* Constante de la velocidad del sonido en el aire */
-
 
 /*
  * @brief Clase que representa una habitación
@@ -141,6 +141,7 @@ public:
 			Triangle* nearestTriangle = nullptr;
 			double dist = 1000000;
 			int minIndex = 0;
+
 			for (int i = 0; i < numTriangles; i++) {
 				double d = Vect(nearestSurpassed->triangles[i].getBarycenter(), p.position).length();
 				if (d < dist) {
@@ -149,8 +150,6 @@ public:
 					minIndex = i;
 				}
 			}
-
-			//nearestTriangle->setColor(nearestTriangle->getColor() + glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0));
 
 			int k = 0;
 			for (int i = 0; i < numPlanes; i++) {
@@ -162,7 +161,9 @@ public:
 				}
 			}
 
-			//std::cout << minIndex << " " << p.name << ": collided with " << nearestSurpassed->name << "\t energy: " << p.energy << std::endl;
+			p.setLastReceptor(-1);
+			p.setLastTriangle(nearestTriangle->getIndex());
+
 			Vect normal = nearestSurpassed->getNormal();
 			Vect reflex = nearestSurpassed->reflect(p.incidence);
 			Point pi = nearestSurpassed->incidence(p.position, p.incidence);
@@ -331,7 +332,11 @@ public:
 		int k = 0;
 		for (int i = 0; i < numPlanes; i++) {
 			for (int j = 0; j < numTriangles; j++) {
-				triangles[k] = planes[i].triangles[j];
+				Triangle temp = planes[i].triangles[j];
+				temp.setIndex(k);
+
+				planes[i].triangles[j] = temp;
+				triangles[k] = temp;
 				k++;
 			}
 		}
@@ -381,6 +386,8 @@ public:
 			for (int j = 0; j < dim; j++) {
 				energyReceptors[i][j] /= sumAreas;
 			}
+
+			receptors[i].setEnergyRoom(energyReceptors[i]);
 		}
 
 		// Se guardan las matrices en archivos CSV
@@ -407,4 +414,4 @@ public:
 
 };
 
-#endif // !ROOM_H
+#endif // ROOM_H

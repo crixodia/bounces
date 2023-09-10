@@ -2,6 +2,7 @@
 #define VECT_H
 
 #include <ostream>
+
 #include "point.h"
 
 /**
@@ -272,4 +273,4 @@ public:
 	}
 };
 
-#endif // !VECT_H
+#endif // VECT_H

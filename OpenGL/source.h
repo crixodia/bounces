@@ -2,13 +2,10 @@
 #define SOURCE_H
 
 #include <ostream>
-#include "point.h"
-#include "particle.h"
 
-#include <learnopengl/shader.h>
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "point.h"
+#include "triangle.h"
+#include "particle.h"
 
 constexpr auto PI = 3.14159265358979323846; /* pi */
 const glm::vec4 DEFAULT_SOURCE_COLOR = glm::vec4(1, 0.82, 0.31, 1); /* Color por defecto de la fuente */
@@ -129,7 +126,7 @@ private:
 	}
 public:
 	int size;			/* Número de caras de la fuente */
-	std::string name;	/* Nombre de la fuente */
+	int ID;	/* Nombre de la fuente */
 	int numParticles;	/* Número de partículas */
 	float scale;		/* Escala de la fuente */
 	Point position;		/* Posición de la fuente */
@@ -173,7 +170,7 @@ public:
 	 */
 	Source(Point p, int n, float e, float l) {
 		size = 20 * 3;
-		name = "Source";
+		ID = -1;
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		sourceColor = DEFAULT_SOURCE_COLOR;
 		scale = 1.0f;
@@ -235,8 +232,8 @@ public:
 	/**
 	 * @brief Configura el nombre de la fuente.
 	 */
-	void setName(std::string n) {
-		name = n;
+	void setID(int n) {
+		ID = n;
 	}
 
 	/**
@@ -272,4 +269,4 @@ public:
 	}
 };
 
-#endif // !SOURCE_H
+#endif // SOURCE_H

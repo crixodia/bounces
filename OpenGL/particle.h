@@ -2,12 +2,10 @@
 #define PARTICLE_H
 
 #include <ostream>
+
 #include "point.h"
 #include "vect.h"
-
-#include <learnopengl/shader.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "receptor.h"
 
 unsigned int cubeVAO; /* Vertex Array Object */
 unsigned int cubeVBO; /* Vertex Buffer Object */
@@ -72,6 +70,8 @@ public:
 	float loss;			/* Pérdida de energía de la partícula */
 	int size;			/* Tamaño del poliedro que forma la partícula */
 	std::string name;	/* Nombre de la partícula */
+	int lastReceptor; /* Último receptor con el que ha colisionado la partícula */
+	int lastTriangle; /* Último triángulo con el que ha colisionado la partícula */
 
 
 	/**
@@ -115,6 +115,9 @@ public:
 		name = "Particle";
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		particleColor = glm::vec4(246.0f / 255.0f, 48.0f / 255.0f, 0.0f, 0.0f);
+
+		lastTriangle = -1;
+		lastReceptor = -1;
 	}
 
 	/**
@@ -139,6 +142,15 @@ public:
 	 */
 	void setName(std::string n) {
 		name = n;
+	}
+
+
+	void setLastTriangle(int t) {
+		lastTriangle = t;
+	}
+
+	void setLastReceptor(int ID) {
+		lastReceptor = ID;
 	}
 
 	/**
@@ -185,4 +197,4 @@ public:
 
 };
 
-#endif // !PARTICLE_H
+#endif // PARTICLE_H

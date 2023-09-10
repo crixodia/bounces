@@ -1,10 +1,16 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <learnopengl/shader.h>
 #include <learnopengl/camera.h>
-#include "particle.h"
-#include "receptor.h"
+
 
 // Camera
 Camera camera(glm::vec3(0.0f, 0.0f, 10.0f));
@@ -82,4 +88,4 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
-#endif // !UTILS_H
+#endif // UTILS_H

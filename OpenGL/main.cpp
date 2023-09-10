@@ -1,31 +1,14 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <learnopengl/shader.h>
-#include <learnopengl/camera.h>
-
 #include <iostream>
 
-//#define STB_IMAGE_IMPLEMENTATION 
-//#include <learnopengl/stb_image.h>
-
-#include "room.h"
-#include "plane.h"
-#include "vect.h"
-#include "particle.h"
-#include "source.h"
-#include "receptor.h"
-
-// Screen size
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
-// Utils (Camera, Timing)
 #include "utils.h"
+
+#include "room.h"
+#include "source.h"
+#include "receptor.h"
+#include "particle.h"
 
 int main()
 {
@@ -69,7 +52,9 @@ int main()
 	for (float i = 0; i < receptorsPerSide; i += 1) {
 		for (float j = 0; j < receptorsPerSide; j += 1) {
 			for (float k = 0; k < receptorsPerSide; k += 1) {
-				receptors[l] = Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f);
+				Receptor rec = Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f);
+				rec.setID(l);
+				receptors[l] = rec;
 				l++;
 			}
 		}
@@ -115,8 +100,8 @@ int main()
 	Source::initSourceBuffers();
 	Receptor::initReceptorBuffers();
 
-	int MAX_PARTICLES = 200; // Se recomienda usar 400 para un rendimiento óptimo
-	float ENERGY = 200;
+	int MAX_PARTICLES = 400; // Se recomienda usar 400 para un rendimiento óptimo
+	float ENERGY = 500;
 	float LOSS = 0.2f;
 
 	//Source source = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS);
@@ -154,6 +139,11 @@ int main()
 			deltaTime = 0;
 		}
 
+		// Receptors
+		for (int i = 0; i < RECEPTORS; i++) {
+			receptors[i].transform(deltaTime, currentFrame, view, projection);
+		}
+
 		// Source
 		//source.transform(deltaTime, currentFrame, view, projection);
 		source2.transform(deltaTime, currentFrame, view, projection);
@@ -166,11 +156,11 @@ int main()
 			// Collisions
 			//room.handleParticleCollision(source.particles[i]);
 			room.handleParticleCollision(source2.particles[i]);
-		}
 
-		// Receptors
-		for (int i = 0; i < RECEPTORS; i++) {
-			receptors[i].transform(deltaTime, currentFrame, view, projection);
+			// Receptor collisions
+			for (int j = 0; j < RECEPTORS; j++) {
+				receptors[j].handleParticleCollision(source2.particles[i]);
+			}
 		}
 
 		glfwSwapBuffers(window);
