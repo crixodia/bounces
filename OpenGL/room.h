@@ -4,8 +4,8 @@
 #include <ostream>
 
 #include "plane.h"
-#include "receptor.h"
 #include "csv.h"
+#include "receptor.h"
 #include "particle.h"
 
 constexpr auto V_SON = 340.0f; /* Constante de la velocidad del sonido en el aire */
@@ -154,7 +154,7 @@ public:
 			int k = 0;
 			for (int i = 0; i < numPlanes; i++) {
 				for (int j = 0; j < numTriangles; j++) {
-					glm::vec4 colorTransform = glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0);
+					glm::vec4 colorTransform = glm::vec4(p.energy * p.loss, -p.energy * p.loss, -p.energy * p.loss, 0) * 0.5f;
 					colorTransform = colorTransform * (float)energyRoom[index * numTriangles + minIndex][k];
 					planes[i].triangles[j].setColor(planes[i].triangles[j].getColor() + colorTransform);
 					k++;

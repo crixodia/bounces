@@ -9,6 +9,7 @@
 #include "particle.h"
 
 const glm::vec4 DEFAULT_RECEPTOR_COLOR = glm::vec4(0.32, 0.8, 0.37, 1); /* Color por defecto del receptor */
+const int MAX_RECEPTOR_DATA = 10000;
 
 unsigned int receptorVAO; /* Vertex Array Object */
 unsigned int receptorVBO; /* Vertex Buffer Object */
@@ -21,6 +22,7 @@ class Receptor {
 private:
 	Shader shader; /* Shader para dibujar el receptor */
 	glm::vec4 receptorColor; /* Color del receptor */
+
 
 	/**
 	 * @brief Genera los triángulos que forman el receptor en base a los vértices del icosaedro.
@@ -47,6 +49,10 @@ public:
 	double radio;		/* Radio del receptor */
 	double energy; /* Energía del receptor */
 	double* energyRoom;
+	double** data; /* Datos del receptor */
+	int idx = 0; /* Índice de los datos del receptor */
+	bool saved; /* Indica si el receptor ha sido guardado */
+	float lt;
 
 	std::vector<Triangle> triangles; /* Triángulos que forman el receptor */
 
@@ -82,6 +88,7 @@ public:
 	 */
 	Receptor(Point p, float s) {
 		size = 20 * 3;
+		saved = false;
 		ID = -1;
 		shader = Shader("shaders/cube.vs", "shaders/cube.fs");
 		receptorColor = DEFAULT_RECEPTOR_COLOR;
@@ -89,6 +96,9 @@ public:
 		position = p + (errorTranslation * scale);
 		radio = computeRadio();
 		genTriangles();
+		data = new double* [MAX_RECEPTOR_DATA];
+		idx = 0;
+		lt = 0;
 	}
 
 	Receptor& operator=(const Receptor& r) {
@@ -102,6 +112,10 @@ public:
 		triangles = r.triangles;
 		energy = r.energy;
 		energyRoom = r.energyRoom;
+		data = r.data;
+		idx = r.idx;
+		saved = r.saved;
+		lt = r.lt;
 		return *this;
 	}
 
@@ -124,6 +138,10 @@ public:
 		triangles = r.triangles;
 		energy = r.energy;
 		energyRoom = r.energyRoom;
+		data = r.data;
+		idx = r.idx;
+		saved = r.saved;
+		lt = r.lt;
 	}
 
 	double computeRadio() {
@@ -181,17 +199,45 @@ public:
 
 	}
 
-	void handleParticleCollision(Particle& p) {
+	void handleParticleCollision(Particle& p, float currentTime, bool paused) {
 		Vect dist = Vect(p.position, position);
 		if (p.lastTriangle == -1) {
 			return;
 		}
 
+		double particleEnergy = 0;
+		double roomEnergy = 0;
 		if (dist.length() < radio && p.lastReceptor == -1) {
-			energy += p.energy * energyRoom[p.lastTriangle];
-			// std::cout << ID << " " << p.lastTriangle << " " << energyRoom[p.lastTriangle] << std::endl;
+			energy = p.energy + energyRoom[p.lastTriangle];
 			p.setLastReceptor(ID);
-			receptorColor = receptorColor + p.energy * glm::vec4(0.1, 0.1, 0.1, 0);
+			receptorColor = receptorColor + p.energy * glm::vec4(0.05);
+		}
+
+		if (lt == 0) {
+			lt = currentTime;
+		}
+
+		if (!saved) {
+			if (lt == currentTime) {
+				return;
+			}
+			else {
+				lt = currentTime;
+			}
+
+			if (paused && idx < MAX_RECEPTOR_DATA) {
+				data[idx] = new double[4];
+				data[idx][0] = currentTime;
+				data[idx][1] = energy;
+				idx++;
+			}
+			else if (idx >= MAX_RECEPTOR_DATA) {
+				saved = true;
+				char* filename = new char[100];
+				snprintf(filename, 100, "csv/receptors/receptor_%f_%f_%f.csv", position.x, position.y, position.z);
+				CSV(filename, data, MAX_RECEPTOR_DATA, 2);
+				std::cout << "Receptor " << ID << " saved" << std::endl;
+			}
 		}
 	}
 

@@ -192,15 +192,19 @@ D:\Repositories\bounces\OpenGL\source.h(262,51): warning C4305: 'argument': trun
           [
               T=float
           ]
-D:\Repositories\bounces\OpenGL\receptor.h(31,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Repositories\bounces\OpenGL\receptor.h(32,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 D:\Repositories\bounces\OpenGL\receptor.h(33,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Repositories\bounces\OpenGL\receptor.h(175,53): warning C4305: 'argument': truncation from 'double' to 'T'
+D:\Repositories\bounces\OpenGL\receptor.h(34,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\receptor.h(35,13): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Repositories\bounces\OpenGL\receptor.h(193,53): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+D:\Repositories\bounces\OpenGL\receptor.h(213,57): warning C4305: 'argument': truncation from 'double' to 'T'
           with
           [
               T=float
           ]
 D:\Repositories\bounces\OpenGL\main.cpp(48,23): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\Repositories\bounces\OpenGL\main.cpp(49,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
+D:\Repositories\bounces\OpenGL\main.cpp(106,13): warning C4305: 'initializing': truncation from 'double' to 'float'
   OpenGL.vcxproj -> D:\Repositories\bounces\x64\Debug\OpenGL.exe

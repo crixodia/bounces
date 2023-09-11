@@ -46,13 +46,14 @@ int main()
 	// Receptors
 	int RECEPTORS = 27; // 3, 9, 27, 81, 243, 729, 2187
 	int receptorsPerSide = pow(RECEPTORS, 1.0f / 3.0f);
-	float receptorDelta = (2 * 1.6) / (receptorsPerSide - static_cast<float>(1));
+	float receptorDelta = (2 * 1) / (receptorsPerSide - static_cast<float>(1));
 	Receptor* receptors = new Receptor[RECEPTORS];
 	int l = 0;
 	for (float i = 0; i < receptorsPerSide; i += 1) {
 		for (float j = 0; j < receptorsPerSide; j += 1) {
 			for (float k = 0; k < receptorsPerSide; k += 1) {
-				Receptor rec = Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f);
+				//Receptor rec = Receptor({ -1.6 + i * receptorDelta, -1.6 + j * (receptorDelta - 0.4), -1.6 + k * receptorDelta }, 1.0f);
+				Receptor rec = Receptor({ -1 + i * receptorDelta, -1 + j * (receptorDelta), -1 + k * receptorDelta }, 1.0f);
 				rec.setID(l);
 				receptors[l] = rec;
 				l++;
@@ -100,9 +101,9 @@ int main()
 	Source::initSourceBuffers();
 	Receptor::initReceptorBuffers();
 
-	int MAX_PARTICLES = 400; // Se recomienda usar 400 para un rendimiento óptimo
-	float ENERGY = 500;
-	float LOSS = 0.2f;
+	int MAX_PARTICLES = 800; // Se recomienda usar 400 para un rendimiento óptimo
+	float ENERGY = 800;
+	float LOSS = 0.2;
 
 	//Source source = Source({ 0, 0, 0 }, MAX_PARTICLES, ENERGY, LOSS);
 	Source source2 = Source({ 1.6, 1.6, -1.6 }, MAX_PARTICLES, ENERGY, LOSS);
@@ -157,11 +158,13 @@ int main()
 			//room.handleParticleCollision(source.particles[i]);
 			room.handleParticleCollision(source2.particles[i]);
 
-			// Receptor collisions
+			// Receptor Collision
 			for (int j = 0; j < RECEPTORS; j++) {
-				receptors[j].handleParticleCollision(source2.particles[i]);
+				receptors[j].handleParticleCollision(source2.particles[i], currentFrame, particlesState);
 			}
 		}
+
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
